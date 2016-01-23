@@ -1,0 +1,1 @@
+<p>Usted tiene actualmente <b>${$credit|money_format}</b> de cr&eacute;dito, lo cual no es suficiente para comprar {$nameOfItemToPurchase} por el valor de ${$amount|money_format}. Por favor {link href="AYUDA CREDITO" caption="adquiera m&aacute;s cr&eacute;dito"} e intente nuevamente.</p>
