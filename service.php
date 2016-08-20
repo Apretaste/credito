@@ -217,6 +217,8 @@ class Credito extends Service
 		$response->createFromTemplate("information.tpl", $responseContent);
 		$responses[] = $response;
 
+		// Generate a notification
+		$this->utils->addNotification($transferRow->receive, 'credito', $response->subject, 'CREDITO', 'IMPORTANT');
 		return $responses;
 	}
 
