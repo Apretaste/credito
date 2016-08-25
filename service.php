@@ -218,7 +218,7 @@ class Credito extends Service
 		$responses[] = $response;
 
 		// Generate a notification
-		$this->utils->addNotification($transferRow->receive, 'credito', $response->subject, 'CREDITO', 'IMPORTANT');
+		$this->utils->addNotification($transferRow->receiver, 'credito', $response->subject, 'CREDITO', 'IMPORTANT');
 		return $responses;
 	}
 
