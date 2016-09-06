@@ -184,7 +184,7 @@ class Credito extends Service
 				$payment->name = $inventory->name;
 				$payment->seller = $inventory->seller;
 				$payment->buyer = $request->email;
-
+				$payment->transfer = $transferRow;
 				// call the payment function
 				$object->payment($payment);
 			}
