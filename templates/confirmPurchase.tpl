@@ -1,9 +1,9 @@
-<p>&iquest;Esta seguro que quiere comprar <b>{$nameOfItemToPurchase}</b> por el valor de <b>${$amount|money_format}</b>?. Confirme presionando el bot&oacute;n m&aacute;s abajo. Si demora m&aacute;s de una hora en confirmar, su compra ser&aacute; autom&aacute;ticamente anulada.</p>
+<p>&iquest;Esta seguro que quiere comprar <b>{$nameOfItemToPurchase}</b> por el valor de <b>&sect;{$amount|money_format}</b>?. Confirme presionando el bot&oacute;n m&aacute;s abajo. Si demora m&aacute;s de una hora en confirmar, su compra ser&aacute; autom&aacute;ticamente anulada.</p>
 
 {space10}
 
 <center>
-	{button href="CREDITO ACEPTAR {$hash}" caption="Pagar ${$amount|money_format}"}
+	{button href="CREDITO ACEPTAR {$hash}" caption="Pagar &sect;{$amount|money_format}"}
 </center>
 
 {space10}
