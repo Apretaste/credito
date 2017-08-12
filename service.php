@@ -4,20 +4,35 @@ class Credito extends Service
 {
 	/**
 	 * Function executed when the service is called
-	 * 
+	 *
 	 * @param Request
 	 * @return Response
-	 * */
+	 */
 	public function _main(Request $request)
 	{
 		$utils = new Utils();
 		$amount = false;
 		$receiver = false;
 
+		// do not allow blank searches
+		if(empty($request->query))
+		{
+			// get the person's credit
+			$person = $utils->getPerson($request->email);
+			$credit = number_format($person->credit, 2);
+
+			$response = new Response();
+			$response->setResponseSubject("Su credito");
+			$response->createFromTemplate("home.tpl", array("credit"=>$credit));
+			return $response;
+		}
+
 		// get the email and the amount to send
 		foreach(explode(" ", $request->query) as $value)
 		{
-			// check if it is a valid email
+			// check if it is a valid @username or email
+			$temp = $utils->getEmailFromUsername($value);
+			if($temp) $value = $temp;
 			if(filter_var($value, FILTER_VALIDATE_EMAIL)) $receiver = $value;
 
 			// check if it is a valid money amount
@@ -25,18 +40,14 @@ class Credito extends Service
 			if(preg_match("/^-?[0-9]+(?:\.[0-9]{1,2})?$/", $number)) $amount = $number;
 		}
 
-		// return error response if the receiver or the amount are wrong  
+		// return error response if the receiver or the amount are wrong
 		if(empty($amount) || empty($receiver))
 		{
-			if(empty($receiver)) $message = "El email de la persona a recibir no es correcto. Puede que usted halla escrito el email mal por error.";
+			if(empty($receiver)) $message = "El email o @username de la persona a recibir no es correcto. Puede que usted halla escrito el email mal por error.";
 			else $message = "La cantidad insertada no es correcta, parece que usted inserto un n&uacute;mero que no es v&aacute;lido.";
 
-			// update the valid email on the usage text
-			$validEmailAddress = $utils->getValidEmailAddress();
-			$usage = str_replace('{APRETASTE_EMAIL}', $validEmailAddress, $this->serviceUsage);
-
 			// send response to the user
-			$responseContent = array("message" => $message, "query" => $request->query, "help" => nl2br($usage));
+			$responseContent = array("message" => $message, "query" => $request->query);
 			$response = new Response();
 			$response->subject = "El email o la cantidad a transferir son incorrectas";
 			$response->createFromTemplate("invalid.tpl", $responseContent);
@@ -60,6 +71,7 @@ class Credito extends Service
 			// send response to the user
 			$responseContent = array("amount" => $amount, "credit" => $profile->credit, "email" => $receiver);
 			$template = "nocredit.tpl";
+
 			if($request->subject == "PURCHASE")
 			{
 				$template = "nocreditPurchase.tpl";
@@ -79,9 +91,10 @@ class Credito extends Service
 		$connection = new Connection();
 		$connection->deepQuery($query);
 
-		// create the variables for the view 
+		// create the variables for the view
 		$template = "confirmation.tpl";
 		$responseContent = array("amount" => $amount, "receiver" => $receiver, "hash" => $confirmationHash);
+
 		if($request->subject == "PURCHASE")
 		{
 			$template = "confirmPurchase.tpl";
@@ -95,13 +108,12 @@ class Credito extends Service
 		return $response;
 	}
 
-
 	/**
 	 * Function executed when the subservice is called
 	 *
 	 * @param Request
 	 * @return Response
-	 * */
+	 */
 	public function _aceptar(Request $request)
 	{
 		$hash = $request->query;
@@ -222,13 +234,12 @@ class Credito extends Service
 		return $responses;
 	}
 
-
 	/**
 	 * Function executed when the subservice is called
 	 *
 	 * @param Request
 	 * @return Response
-	 * */
+	 */
 	public function _comprar(Request $request)
 	{
 		$code = $request->query;

@@ -8,4 +8,4 @@
 
 {space10}
 
-<small><p>Si usted no quiere realizar esta transferencia, o no reconoce esta transacci&oacute;n, por favor descarte este email. <b>Su cr&eacute;dito no ser&aacute; afectado a menos que confirme la transferencia</b>.</p></small>
+<small><p>Si usted no quiere realizar esta transferencia, o no reconoce esta transacci&oacute;n, por favor descarte esta notificaci&oacute;n. <b>Su cr&eacute;dito no ser&aacute; afectado a menos que confirme la transferencia</b>.</p></small>
