@@ -1,9 +1,9 @@
-<p>Recibimos su solicitud de transferir <b>${$amount|money_format}</b> de cr&eacute;dito a <b>{$receiver}</b>. Confirme presionando el bot&oacute;n m&aacute;s abajo. Si demora m&aacute;s de una hora en confirmar, su transferencia ser&aacute; autom&aacute;ticamente descartada.</p>
+<p>Recibimos su solicitud de transferir <b>&sect;{$amount|money_format}</b> de cr&eacute;dito a <b>{$receiver}</b>. Confirme presionando el bot&oacute;n m&aacute;s abajo. Si demora m&aacute;s de una hora en confirmar, su transferencia ser&aacute; autom&aacute;ticamente descartada.</p>
 
 {space10}
 
 <center>
-	{button href="CREDITO ACEPTAR {$hash}" caption="Transferir ${$amount|money_format}"}
+	{button href="CREDITO ACEPTAR {$hash}" caption="Transferir &sect;{$amount|money_format}"}
 </center>
 
 {space10}
