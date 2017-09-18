@@ -12,4 +12,5 @@
 <center>
 	{button href="WEB credito.apretaste.com" caption="Obtener cr&eacute;dito" color="grey"}
 	{button href="CREDITO" caption="Transferir" body="Agregue al asunto el @username o email del receptor seguido de la cantidad a recibir despues de la palabra CREDITO. Por ejemplo: CREDITO @amigo 2.40" desc="Inserte el @username o email del receptor seguido de la cantidad a recibir. Por ejemplo: @amigo 2.40" popup="true"}
+	{button href="CREDITO COMPRAS" caption="Compras" color="blue"}
 </center>

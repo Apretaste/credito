@@ -270,4 +270,34 @@ class Credito extends Service
 		$r->query = $inventory->price . " " . $inventory->seller;
 		return $this->_main($r);
 	}
+
+	public function _compras($request)
+	{
+		$sql = "SELECT transfer.transfer_time, transfer.amount, inventory.name 
+					-- , inventory.price, transfer.amount / inventory.price as items_count 
+				FROM transfer INNER JOIN inventory
+					ON transfer.inventory_code = inventory.code
+				WHERE transfer.sender = '{$request->email}' 
+					AND transfer.transfered = '1'
+			  	ORDER BY transfer.transfer_time DESC
+				LIMIT 0,50;";
+
+		$connection = new Connection();
+		$r = $connection->query($sql);
+		$response = new Response();
+
+		if ( ! isset($r[0]))
+		{
+			$response->setResponseSubject("No has comprado nada en Apretaste!");
+			$response->createFromText("Hasta el momento no tenemos registrada ninguna compra tuya.");
+			return $response;
+		}
+
+		$response->setResponseSubject("Sus ultimas compras");
+		$response->createFromTemplate("compras.tpl", [
+			"items" => $r
+		]);
+
+		return $response;
+	}
 }
