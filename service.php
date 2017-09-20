@@ -21,25 +21,22 @@ class Credito extends Service
 			$person = $utils->getPerson($request->email);
 			$credit = number_format($person->credit, 2);
 
-			$sql = "SELECT transfer.transfer_time, transfer.amount, inventory.name 
-					-- , inventory.price, transfer.amount / inventory.price as items_count 
+			$sql = "SELECT transfer.transfer_time, transfer.amount, inventory.name
 				FROM transfer INNER JOIN inventory
-					ON transfer.inventory_code = inventory.code
-				WHERE transfer.sender = '{$request->email}' 
-					AND transfer.transfered = '1'
-			  	ORDER BY transfer.transfer_time DESC
+				ON transfer.inventory_code = inventory.code
+				WHERE transfer.sender = '{$request->email}'
+				AND transfer.transfered = '1'
+				ORDER BY transfer.transfer_time DESC
 				LIMIT 0,50;";
 
 			$connection = new Connection();
 			$r = $connection->query($sql);
-			
-			if (!isset($r[0]))
-				$r = false;
-			
+			if (!isset($r[0])) $r = false;
+
 			$response = new Response();
 			$response->setResponseSubject("Su credito");
 			$response->createFromTemplate("home.tpl", array("credit"=>$credit, "items" => $r));
-			
+
 			return $response;
 		}
 
