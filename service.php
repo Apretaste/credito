@@ -219,7 +219,7 @@ class Credito extends Service
 		}
 
 		// send a notification to the receiver
-		$msg = "Usted ha recibido §{$transferRow->amount} en credito de Apretaste"
+		$msg = "Usted ha recibido §{$transferRow->amount} de credito";
 		$this->utils->addNotification($transferRow->receiver, 'Credito', $msg, 'CREDITO', 'IMPORTANT');
 
 		// create response to send to the user
