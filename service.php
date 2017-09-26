@@ -72,7 +72,7 @@ class Credito extends Service
 		{
 			$responseContent = array("email" => $receiver);
 			$response = new Response();
-			$response->subject = "El email del destinatario no existe";
+			$response->subject = "La persona no existe";
 			$response->createFromTemplate("inexistent.tpl", $responseContent);
 			return $response;
 		}
@@ -102,7 +102,7 @@ class Credito extends Service
 		$inventory_code = $request->subject == "PURCHASE" ? $request->name : "NULL";
 		$query = "INSERT INTO transfer(sender,receiver,amount,confirmation_hash,inventory_code) VALUES ('{$request->email}', '$receiver', '$amount', '$confirmationHash', '$inventory_code')";
 		$connection = new Connection();
-		$connection->deepQuery($query);
+		$connection->query($query);
 
 		// create the variables for the view
 		$template = "confirmation.tpl";
@@ -133,7 +133,7 @@ class Credito extends Service
 
 		// get the transfer details, ensure the transfer is valid
 		$connection = new Connection();
-		$transfer = $connection->deepQuery("SELECT * FROM transfer WHERE confirmation_hash = '$hash' && transfered = 0");
+		$transfer = $connection->query("SELECT * FROM transfer WHERE confirmation_hash = '$hash' && transfered = 0");
 
 		// error if the hash was not valid or the transaction was used already
 		if(empty($hash) || empty($transfer))
@@ -173,13 +173,12 @@ class Credito extends Service
 		}
 
 		// make the transfer
-		$sql = "
+		$connection->query("
 			START TRANSACTION;
 			UPDATE person SET credit=credit-{$transferRow->amount} WHERE email='{$request->email}';
 			UPDATE person SET credit=credit+{$transferRow->amount} WHERE email='{$transferRow->receiver}';
 			UPDATE transfer SET transfered=1 WHERE id='{$transferRow->id}';
-			COMMIT;";
-		$connection->deepQuery($sql);
+			COMMIT;");
 
 		// if it is a transfer
 		if($transferRow->inventory_code == "NULL")
@@ -192,7 +191,7 @@ class Credito extends Service
 		else
 		{
 			// get the transfer row
-			$inventory = $connection->deepQuery("SELECT * FROM inventory WHERE code = '{$transferRow->inventory_code}'")[0];
+			$inventory = $connection->query("SELECT * FROM inventory WHERE code = '{$transferRow->inventory_code}'")[0];
 			$serviceName = strtolower($inventory->service);
 
 			// include the service
@@ -219,6 +218,10 @@ class Credito extends Service
 			$itemBought = $inventory->name;
 		}
 
+		// send a notification to the receiver
+		$msg = "Usted ha recibido §{$transferRow->amount} en credito de Apretaste"
+		$this->utils->addNotification($transferRow->receiver, 'Credito', $msg, 'CREDITO', 'IMPORTANT');
+
 		// create response to send to the user
 		$responseContent = array(
 			"amount" => $transferRow->amount,
@@ -226,25 +229,11 @@ class Credito extends Service
 			"itemBought" => $itemBought // used only for payment
 		);
 
-		$responses = array();
-
 		// send the receipt to the sender
 		$response = new Response();
 		$response->subject = $subject;
 		$response->createFromTemplate($template, $responseContent);
-		$responses[] = $response;
-
-		// Let the receiver know
-		$responseContent = array("amount" => $transferRow->amount, "sender" => $request->email);
-		$response = new Response();
-		$response->email = $transferRow->receiver;
-		$response->subject = "Usted ha recibido \${$transferRow->amount} en credito de Apretaste";
-		$response->createFromTemplate("information.tpl", $responseContent);
-		$responses[] = $response;
-
-		// Generate a notification
-		$this->utils->addNotification($transferRow->receiver, 'credito', $response->subject, 'CREDITO', 'IMPORTANT');
-		return $responses;
+		return $response;
 	}
 
 	/**
@@ -259,7 +248,7 @@ class Credito extends Service
 
 		// get the payment details
 		$connection = new Connection();
-		$inventory = $connection->deepQuery("SELECT * FROM inventory WHERE code = '$code' && active = 1");
+		$inventory = $connection->query("SELECT * FROM inventory WHERE code = '$code' && active = 1");
 
 		// error if the code was not valid or the inventory item cannot be found or its not active
 		if(empty($code) || empty($inventory))
