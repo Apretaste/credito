@@ -1,7 +1,8 @@
-<p>Gracias por tu compra de <b>{$itemBought}</b> por el precio de <b>&sect;{$amount|money_format}</b>. Tu pago ha sido realizado con &eacute;xito el {$smarty.now|date_format:"%e de %B del %Y"}. Este email functiona como tu recibo. Por favor almacena este email para tus records.</p>
-<br/>
-<p>Revise su perfil verificar su cr&eacute;dito disponible.</p>
+<h1>Compra realizada</h1>
+<p>Gracias por su compra de <b>{$itemBought}</b> por el precio de <b>&sect;{$amount|money_format}</b>. Su pago ha sido realizado con &eacute;xito el {$smarty.now|date_format:"%e de %B del %Y"}. Por favor almacene esta pagina como recibo de la compra.</p>
+
 {space5}
+
 <center>
-	{button href="PERFIL" caption="Ver mi perfil"}
+	{button href="CREDITO" caption="Mis compras"}
 </center>
