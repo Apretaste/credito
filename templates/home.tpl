@@ -10,7 +10,7 @@
 
 <center>
 	{button href="WEB credito.apretaste.com" caption="Obtener cr&eacute;dito" color="grey"}
-	{button href="CREDITO" caption="Transferir" body="Agregue al asunto el @username o email del receptor seguido de la cantidad a recibir despues de la palabra CREDITO. Por ejemplo: CREDITO @amigo 2.40" desc="Inserte el @username o email del receptor seguido de la cantidad a recibir. Por ejemplo: @amigo 2.40" popup="true"}
+	{button href="CREDITO" caption="Transferir" desc="Inserte el @username o email del receptor|Inserte la cantidad a recibir" popup="true"}
 </center>
 
 {if $items !== false}
@@ -25,9 +25,9 @@
 		</tr>
 		{foreach from=$items item=item}
 			<tr {if $item@iteration is odd}bgcolor="F2F2F2"{/if} align="center">
-				<td width="40%">{$item->transfer_time|date_format:"%e/%m/%Y"}</td>
+				<td>{$item->transfer_time|date_format:"%e/%m/%Y"}</td>
 				<td>{$item->name}</td>
-				<td>&sect;{$item->amount|money_format}&nbsp;&nbsp;</td>
+				<td>&sect;{$item->amount|money_format}</td>
 			</tr>
 		{/foreach}
 	</table>
