@@ -106,7 +106,7 @@ class Credito extends Service
 
 		// create the variables for the view
 		$template = "confirmation.tpl";
-		$responseContent = array("amount" => $amount, "receiver" => $receiver, "hash" => $confirmationHash);
+		$responseContent = array("amount" => $amount, "receiver" => $this->utils->getUsernameFromEmail($receiver), "hash" => $confirmationHash);
 
 		if($request->subject == "PURCHASE")
 		{
@@ -154,7 +154,7 @@ class Credito extends Service
 		{
 			$response = new Response();
 			$response->subject = "Su transferencia o pago ha expirado";
-			$responseContent = array("amount" => $transferRow->amount, "receiver" => $transferRow->receiver);
+			$responseContent = array("amount" => $transferRow->amount, "receiver" => $this->utils->getUsernameFromEmail($transferRow->receiver));
 			$response->createFromTemplate("expired.tpl", $responseContent);
 			return $response;
 		}
@@ -165,7 +165,7 @@ class Credito extends Service
 		if($profile->credit < $transferRow->amount)
 		{
 			// send response to the user
-			$responseContent = array("amount" => $transferRow->amount, "credit" => $profile->credit, "email" => $transferRow->receiver);
+			$responseContent = array("amount" => $transferRow->amount, "credit" => $profile->credit, "email" => $this->utils->getUsernameFromEmail($transferRow->receiver));
 			$response = new Response();
 			$response->subject = "No tiene suficiente credito";
 			$response->createFromTemplate("nocredit.tpl", $responseContent);
@@ -225,7 +225,7 @@ class Credito extends Service
 		// create response to send to the user
 		$responseContent = array(
 			"amount" => $transferRow->amount,
-			"receiver" => $transferRow->receiver,
+			"receiver" => $this->utils->getUsernameFromEmail($transferRow->receiver),
 			"itemBought" => $itemBought // used only for payment
 		);
 
