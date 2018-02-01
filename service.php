@@ -95,7 +95,7 @@ class Credito extends Service
 
 		// create the variables for the view
 		$template = "confirmation.tpl";
-		$responseContent = ["amount" => $amount, "receiver" => "@$receiver", "hash" => $confirmationHash];
+		$responseContent = ["amount" => $amount, "receiver" => $receiver, "hash" => $confirmationHash];
 
 		if ($request->subject == "PURCHASE") {
 			$template = "confirmPurchase.tpl";
