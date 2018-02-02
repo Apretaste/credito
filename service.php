@@ -10,71 +10,54 @@ class Credito extends Service
 	 */
 	public function _main(Request $request)
 	{
-		$utils = new Utils();
-		$amount = false;
-		$receiver = false;
-
-		// do not allow blank searches
-		if (empty($request->query)) {
+		// if blank, show home page
+		if (empty($request->query))
+		{
 			// get the person's credit
-			$person = $utils->getPerson($request->email);
+			$person = $this->utils->getPerson($request->email);
 			$credit = number_format($person->credit, 2);
 
-			$sql = "SELECT transfer.transfer_time, transfer.amount, inventory.name
-				FROM transfer INNER JOIN inventory
+			// get latest purchases
+			$items = Connection::query("
+				SELECT transfer.transfer_time, transfer.amount, inventory.name
+				FROM transfer
+				INNER JOIN inventory
 				ON transfer.inventory_code = inventory.code
 				WHERE transfer.sender = '{$request->email}'
 				AND transfer.transfered = '1'
 				ORDER BY transfer.transfer_time DESC
-				LIMIT 0,50;";
-
-			$r = Connection::query($sql);
-			if (!isset($r[0])) $r = false;
+				LIMIT 0,50;");
+			if (empty($items)) $items = false;
 
 			$response = new Response();
 			$response->setResponseSubject("Su credito");
-			$response->createFromTemplate("home.tpl", ["credit" => $credit, "items" => $r]);
-
+			$response->createFromTemplate("home.tpl", ["credit" => $credit, "items" => $items]);
 			return $response;
 		}
 
-		// clear query
-		$request->query = trim($request->query);
-		while (stripos($request->query, '  ')) $request->query = str_replace('  ', ' ', $request->query);
-		$arr = explode(' ', $request->query);
+		// get @username and amount
+		$request->query = trim(preg_replace('/\s+/', ' ', $request->query));
+		$arr = explode(" ", $request->query);
+		$receiver = isset($arr[0]) ? $arr[0] : false;
+		$amount = isset($arr[1]) ? $arr[1]*1 : false;
 
-		if (isset($arr[0])) $receiver = $arr[0];
-		if (isset($arr[1])) $amount = $arr[1] * 1;
+		// get the email from the @username
+		$receiverEmail = $this->utils->getEmailFromUsername($receiver);
 
 		// return error response if the receiver or the amount are wrong
-		if (empty($amount) || empty($receiver)) {
-			if (empty($receiver)) $message = "El @username de la persona a recibir no es correcto. Verifiquelo.";
-			else $message = "La cantidad insertada no es correcta, parece que usted insert&oacute; un n&uacute;mero que no es v&aacute;lido.";
-
-			// send response to the user
-			$responseContent = ["message" => $message, "query" => $request->query];
+		if (empty($receiverEmail) || empty($amount))
+		{
 			$response = new Response();
 			$response->subject = "El nombre de usuario o la cantidad a transferir son incorrectas";
-			$response->createFromTemplate("invalid.tpl", $responseContent);
-			return $response;
-		}
-
-		$receiverEmail = $utils->getEmailFromUsername($receiver);
-
-		// check if the person exist. If not, message the requestor
-		if (!$utils->personExist($receiverEmail)) {
-			$responseContent = ["email" => $receiver];
-			$response = new Response();
-			$response->subject = "La persona no existe";
-			$response->createFromTemplate("inexistent.tpl", $responseContent);
+			$response->createFromTemplate("invalid.tpl", ["query"=>$request->query]);
 			return $response;
 		}
 
 		// check if you have enough credit to transfer
-		$profile = $utils->getPerson($request->email);
-		if ($profile->credit < $amount) {
-			// send response to the user
-			$responseContent = ["amount" => $amount, "credit" => $profile->credit, "email" => $receiver];
+		$profile = $this->utils->getPerson($request->email);
+		if ($profile->credit < $amount)
+		{
+			$responseContent = ["amount"=>$amount, "credit"=>$profile->credit, "email"=>$receiver];
 			$template = "nocredit.tpl";
 
 			if ($request->subject == "PURCHASE") {
@@ -89,7 +72,7 @@ class Credito extends Service
 		}
 
 		// save the transfer intention in the database
-		$confirmationHash = $utils->generateRandomHash();
+		$confirmationHash = $this->utils->generateRandomHash();
 		$inventory_code = $request->subject == "PURCHASE" ? $request->name : "NULL";
 		Connection::query("INSERT INTO transfer(sender,receiver,amount,confirmation_hash,inventory_code) VALUES ('{$request->email}', '$receiverEmail', '$amount', '$confirmationHash', '$inventory_code')");
 
@@ -146,7 +129,7 @@ class Credito extends Service
 
 		// check if you still have enough credit to transfer
 		$utils = new Utils();
-		$profile = $utils->getPerson($transferRow->sender);
+		$profile = $this->utils->getPerson($transferRow->sender);
 		if ($profile->credit < $transferRow->amount) {
 			// send response to the user
 			$responseContent = ["amount" => $transferRow->amount, "credit" => $profile->credit, "email" => $this->utils->getUsernameFromEmail($transferRow->receiver)];
@@ -176,7 +159,7 @@ class Credito extends Service
 			$serviceName = strtolower($inventory->service);
 
 			// include the service
-			include_once $utils->getPathToService($serviceName) . "/service.php";
+			include_once $this->utils->getPathToService($serviceName) . "/service.php";
 			$object = new $serviceName();
 
 			// if the object has a method payment
@@ -238,16 +221,17 @@ class Credito extends Service
 			return $response;
 		}
 
-		// get the element from the inventory
+		// get the seller @username from the inventory
 		$inventory = $inventory[0];
+		$username = $this->utils->getUsernameFromEmail($inventory->seller);
 
 		// start a new transfer
-		$r = new Request();
-		$r->subject = "PURCHASE";
-		$r->name = $inventory->code;
-		$r->body = $inventory->name;
-		$r->email = $request->email;
-		$r->query = $inventory->price . " " . $inventory->seller;
-		return $this->_main($r);
+		$req = new Request();
+		$req->subject = "PURCHASE";
+		$req->name = $inventory->code;
+		$req->body = $inventory->name;
+		$req->email = $request->email;
+		$req->query = "$username {$inventory->price}";
+		return $this->_main($req);
 	}
 }

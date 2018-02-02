@@ -1,6 +1,6 @@
-<p>{$message} Por favor revise el texto escrito escrito e intente nuevamente.</p>
+<p>Hay un error con el @username de la persona o con la cantidad a enviar. Puede que la persona no exista en Apretaste o que el numero no sea valido. Por favor revise el texto de la transferencia m&aacute;s abajo.</p>
 
-<p>Texto escrito: <b>{$query}</b></p>
+<p>Transferencia: <b>{$query}</b></p>
 
 {space10}
 
@@ -10,5 +10,5 @@
 {space10}
 
 <center>
-	{button href="CREDITO" caption="Editar transacci&oacute;n" body="Agregue al asunto el @username o email del receptor seguido de la cantidad a recibir despues de la palabra CREDITO. Por ejemplo: CREDITO @amigo 2.40" desc="Inserte el @username o email del receptor seguido de la cantidad a recibir. Por ejemplo: @amigo 2.40" popup="true"}
+	{button href="CREDITO" caption="Editar transacci&oacute;n" desc="Inserte el @username a recibir*|n:Inserte la cantidad a recibir*" popup="true"}
 </center>

@@ -10,7 +10,7 @@
 
 <center>
 	{button href="WEB credito.apretaste.com" caption="Obtener cr&eacute;dito" color="grey"}
-	{button href="CREDITO" caption="Transferir" desc="Inserte el @username o email del receptor|Inserte la cantidad a recibir" popup="true"}
+	{button href="CREDITO" caption="Transferir" desc="Inserte el @username del receptor*|n:Inserte la cantidad a recibir*" popup="true"}
 </center>
 
 {if $items !== false}
