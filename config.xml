@@ -1,6 +1,6 @@
 <service>
 	<serviceName>credito</serviceName>
-	<serviceDescription>Transfiere crédito de Apretaste a otros usuarios</serviceDescription>
+	<serviceDescription>Revisa tus creditos disponibles de Apretaste y Transfiere crédito a otros usuarios</serviceDescription>
 	<creatorEmail>salvi@apretaste.com</creatorEmail>
 	<serviceCategory>negocios</serviceCategory>
 </service>
