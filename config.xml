@@ -1,6 +1,6 @@
 <service>
 	<serviceName>credito</serviceName>
-	<serviceDescription>Tranfiere credito de Apretaste de un usuario a permite pagar por la compra un bien o servicio</serviceDescription>
+	<serviceDescription>Transfiere crédito de Apretaste a otros usuarios</serviceDescription>
 	<creatorEmail>salvi@apretaste.com</creatorEmail>
 	<serviceCategory>negocios</serviceCategory>
 </service>
