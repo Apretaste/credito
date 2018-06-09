@@ -39,7 +39,7 @@ class Credito extends Service
 		$request->query = trim(preg_replace('/\s+/', ' ', $request->query));
 		$arr = explode(" ", $request->query);
 		$receiver = isset($arr[0]) ? $arr[0] : false;
-		$amount = isset($arr[1]) ? $arr[1]*1 : false;
+		$amount = isset($arr[1]) ? abs($arr[1]*1) : false;
 
 		// get the email from the @username
 		$receiverEmail = $this->utils->getEmailFromUsername($receiver);
