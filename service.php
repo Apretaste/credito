@@ -153,6 +153,16 @@ class Credito extends Service
 			$itemBought = ""; // empty for transfers
 			$subject = "Su transferencia ha sido realizada correctamente";
 		} // if it is a sell, execute the selling code
+		elseif (substr($transferRow->inventory_code,0,3) == "BET") {
+			$match=substr($transferRow->inventory_code,4,10);
+			$team=(substr($transferRow->inventory_code,15,4))=="HOME" ? "HOME":"VISITOR";
+			Connection::query("INSERT INTO _mundial_bets(`user`, `match`, `team`, `amount`, `active`) 
+			VALUES ('".$request->email."','".date("Y-m-d H:i:s",$match)."','".$team."','".$transferRow->amount."',1)");
+			$response=new Response();
+			$response->subject="Juego registrado";
+			$response->createFromText("Su juego fue registrado, le notificaremos al final del partido si su equipo gano o perdio");
+			return $response;
+		}
 		else {
 			// get the transfer row
 			$inventory = Connection::query("SELECT * FROM inventory WHERE code = '{$transferRow->inventory_code}'")[0];
