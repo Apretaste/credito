@@ -244,4 +244,17 @@ class Credito extends Service
 		$req->query = "$username {$inventory->price}";
 		return $this->_main($req);
 	}
+
+	/**
+	 * Show the list of ways to obtain credits
+	 *
+	 * @param Request
+	 * @return Response
+	 */
+	public function _obtener(Request $request)
+	{
+		$response = new Response();
+		$response->createFromTemplate('obtain.tpl', []);
+		return $response;
+	}
 }
