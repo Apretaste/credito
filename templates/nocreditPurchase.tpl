@@ -1,1 +1,0 @@
-<p>Usted tiene actualmente <b>&sect;{$credit|money_format}</b> de cr&eacute;dito, lo cual no es suficiente para comprar {$nameOfItemToPurchase} por el valor de ${$amount|money_format}. Por favor compre m&aacute;s cr&eacute;dito o participe en nuestros eventos especiales.</p>

@@ -1,0 +1,30 @@
+<h1>
+	Su cr&eacute;dito<br/>
+	<span class="green-text">§<%= Number.parseFloat(credit).toFixed(2) %></span>
+</h1>
+
+<p>Use su cr&eacute;dito para canjear por productos o servicios dentro de nuestra app, o transfiera cr&eacute;ditos a otros usuarios.</p>
+
+<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO OBTENER'})">Obtener cr&eacute;dito</a>
+<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO TRANSFERIR'})">Transferir</a>
+
+<% if(items.length) { %>
+	<h1>Transacciones</h1>
+
+	<table class="striped">
+		<tr>
+			<th>Tipo</th>
+			<th>Fecha</th>
+			<th>Para</th>
+			<th>Costo</th>
+		</tr>
+		<% items.forEach(function(item){ %>
+			<tr>
+				<td><%= item.name ? "Cange" : "Envio" %></td>
+				<td><%= formatDate(item.transfer_time) %></td>
+				<td><%= item.name ? item.name : item.username %></td>
+				<td>&sect;<%= Number.parseFloat(item.amount).toFixed(2) %></td>
+			</tr>
+		<% }) %>
+	</table>
+<% } %>
