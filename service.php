@@ -74,7 +74,7 @@ class Service
 		if(isset($request->input->data->item)) {
 			$sale = true;
 			$code = strtoupper($request->input->data->item);
-			$item = Connection::query("SELECT name, price FROM inventory WHERE code='$code'");
+			$item = Connection::query("SELECT name, price, seller FROM inventory WHERE code='$code'");
 			if($item) {
 				$price = $item[0]->price;
 				$article = $item[0]->name;
@@ -95,7 +95,7 @@ class Service
 			return $response->setTemplate('message.ejs', [
 				"header"=>"Datos incorrectos",
 				"icon"=>"sentiment_very_dissatisfied",
-				"text" => "Hay un error con el @username o email de la persona a receibir, o con la cantidad a enviar. Puede que la persona no exista en Apretaste o que la cantidad no sea valida. Por favor verifique los datos e intente nuevamente.",
+				"text" => "Hay un error con el @username o email de la persona a recibir, o con la cantidad a enviar. Puede que la persona no exista en Apretaste o que la cantidad no sea valida. Por favor verifique los datos e intente nuevamente.",
 				"button" => ["href"=>"CREDITO TRANSFERIR", "caption"=>"Transferir"]]);
 		}
 
