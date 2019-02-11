@@ -1,14 +1,16 @@
-<h1>Confirmar transacci&oacute;n</h1>
+<div class="row">
+	<h1>Confirmar transacción</h1>
 
-<% if(sale) { %>
-	<p>&iquest;Est&aacute; seguro que quiere canjear <b><%= article.toLowerCase() %></b> por el valor de <b>&sect;<%= Number.parseFloat(price).toFixed(2) %></b>? Confirme presionando el bot&oacute;n m&aacute;s abajo.</p>
-<% } else { %>
-	<p>Recibimos su solicitud de transferir <b>&sect;<%= Number.parseFloat(price).toFixed(2) %></b> a <b>@<%= receiver.username %></b>. Confirme presionando el bot&oacute;n m&aacute;s abajo.</p>
-<% } %>
+	<% if(sale) { %>
+		<p>¿Está seguro que quiere canjear <b><%= article.toLowerCase() %></b> por el valor de <b>§<%= Number.parseFloat(price).toFixed(2) %></b>? Confirme presionando el botón más abajo.</p>
+	<% } else { %>
+		<p>Recibimos su solicitud de transferir <b>§<%= Number.parseFloat(price).toFixed(2) %></b> a <b>@<%= receiver.username %></b>. Confirme presionando el botón más abajo.</p>
+	<% } %>
 
-<a class="waves-effect waves-light btn" href="#" onclick="apretaste.send({command:'CREDITO ACEPTAR', data:{hash:'<%= hash %>'}})">Confirmar</a>
+	<a class="waves-effect waves-light btn" href="#" onclick="apretaste.send({command:'CREDITO ACEPTAR', data:{hash:'<%= hash %>'}})">Confirmar</a>
 
-<p class="fine-print">
-	Omita este mensaje si no reconoce esta transacci&oacute;n y su cr&eacute;dito no ser&aacute; afectado.<br/>
-	Su transferencia ser&aacute; descartada si demora m&aacute;s de una hora en confirmar.
-</p>
+	<p class="fine-print">
+		Omita este mensaje si no reconoce esta transacción y su crédito no será afectado.<br/>
+		Su transferencia será descartada si demora más de una hora en confirmar.
+	</p>
+</div>

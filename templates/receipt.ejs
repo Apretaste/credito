@@ -1,11 +1,13 @@
-<h1>Transacci&oacute;n realizada</h1>
+<div class="row">
+	<h1>Transacción realizada</h1>
 
-<% if(item) { %>
-	<p>Gracias por canjear <b><%= item.name.toLowerCase() %></b> por <b>&sect;<%= Number.parseFloat(amount).toFixed(2) %></b>.</p>
-<% } else { %>
-	<p>Gracias por transferir <b>&sect;<%= Number.parseFloat(amount).toFixed(2) %></b> a <b>@<%= receiver.username %></b>. Le hemos mandando una notificaci&oacute;n al destinatatio dejandole saber.</p>
-<% } %>
+	<% if(item) { %>
+		<p>Gracias por canjear <b><%= item.name.toLowerCase() %></b> por <b>§<%= Number.parseFloat(amount).toFixed(2) %></b>.</p>
+	<% } else { %>
+		<p>Gracias por transferir <b>§<%= Number.parseFloat(amount).toFixed(2) %></b> a <b>@<%= receiver.username %></b>. Le hemos mandando una notificación al destinatatio dejandole saber.</p>
+	<% } %>
 
-<p>Esta transacci&oacute;n ha sido realizada con &eacute;xito el <%= formatDate(new Date()) %>. Puede descargar esta p&aacute;gina como comprobante.</p>
+	<p>Esta transacción ha sido realizada con éxito el <%= formatDate(new Date()) %>. Puede descargar esta página como comprobante.</p>
 
-<a class="waves-effect waves-light btn" href="#" onclick="apretaste.send({command:'CREDITO'})">Transacciones</a>
+	<a class="waves-effect waves-light btn" href="#" onclick="apretaste.send({command:'CREDITO'})">Transacciones</a>
+</div>

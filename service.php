@@ -177,7 +177,7 @@ class Service
 			COMMIT;");
 
 		// send a notification to the receiver
-		Utils::addNotification($receiver->id, "Usted ha recibido §{$transfer->amount} de credito", "attach_money", "CREDITO");
+		Utils::addNotification($receiver->id, "Usted ha recibido §{$transfer->amount} de credito", "{'command':'CREDITO'}", "attach_money");
 
 		// create response to send to the user
 		$content = [
