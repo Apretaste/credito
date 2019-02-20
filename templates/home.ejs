@@ -1,32 +1,34 @@
 <div class="row">
-	<h1>
-		Su crédito<br/>
-		<span class="green-text">§<%= Number.parseFloat(credit).toFixed(2) %></span>
-	</h1>
+	<div class="col s12">
+		<h1>
+			Su crédito<br/>
+			<span class="green-text">§<%= Number.parseFloat(credit).toFixed(2) %></span>
+		</h1>
 
-	<p>Use su crédito para canjear por productos o servicios dentro de nuestra app, o transfiera créditos a otros usuarios.</p>
+		<p>Use su crédito para canjear por productos o servicios dentro de nuestra app, o transfiera créditos a otros usuarios.</p>
 
-	<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO OBTENER'})">Obtener crédito</a>
-	<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO TRANSFERIR'})">Transferir</a>
+		<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO OBTENER'})">Obtener crédito</a>
+		<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO TRANSFERIR'})">Transferir</a>
 
-	<% if(items.length) { %>
-		<h1>Transacciones</h1>
+		<% if(items.length) { %>
+			<h1>Transacciones</h1>
 
-		<table class="striped">
-			<tr>
-				<th>Tipo</th>
-				<th>Fecha</th>
-				<th>Para</th>
-				<th>Costo</th>
-			</tr>
-			<% items.forEach(function(item){ %>
+			<table class="striped">
 				<tr>
-					<td><%= item.name ? "Cange" : "Envio" %></td>
-					<td><%= formatDate(item.transfer_time) %></td>
-					<td><%= item.name ? item.name : item.username %></td>
-					<td>§<%= Number.parseFloat(item.amount).toFixed(2) %></td>
+					<th>Tipo</th>
+					<th>Fecha</th>
+					<th>Para</th>
+					<th>Costo</th>
 				</tr>
-			<% }) %>
-		</table>
-	<% } %>
+				<% items.forEach(function(item){ %>
+					<tr>
+						<td><%= item.name ? "Cange" : "Envio" %></td>
+						<td><%= formatDate(item.transfer_time) %></td>
+						<td><%= item.name ? item.name : item.username %></td>
+						<td>§<%= Number.parseFloat(item.amount).toFixed(2) %></td>
+					</tr>
+				<% }) %>
+			</table>
+		<% } %>
+	</div>
 </div>

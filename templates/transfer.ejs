@@ -1,23 +1,21 @@
 <div class="row">
-	<h1>Transferir créditos</h1>
-	<p>Usted tiene §<%= Number.parseFloat(credit).toFixed(2) %> Transfiera sus créditos a otro usuario de Apretaste llenando el siguiente formulario.</p>
+	<div class="col s12">
+		<h1>Transferir créditos</h1>
+		<p>Usted tiene §<%= Number.parseFloat(credit).toFixed(2) %> Transfiera sus créditos a otro usuario de Apretaste llenando el siguiente formulario.</p>
 
-	<div class="row">
-		<div class="input-field col s12">
-			<input id="username" type="text"/>
-			<label for="username">Inserte el @username o email del usuario</label>
+		<div class="row">
+			<div class="input-field col s12">
+				<input id="username" type="text"/>
+				<label for="username">Inserte el @username o email del usuario</label>
+			</div>
+
+			<div class="input-field col s12">
+				<input id="amount" type="number"/>
+				<label for="amount">Inserte la cantidad a transferir</label>
+			</div>
 		</div>
 
-		<div class="input-field col s12">
-			<input id="amount" type="number"/>
-			<label for="amount">Inserte la cantidad a transferir</label>
-		</div>
-
-		<div class="input-field col s12">
-			<a class="waves-effect waves-light btn" href="#!" onclick="transferCredits(credit)">
-				<i class="material-icons right">send</i>
-				Transferir
-			</a>
-		</div>
+		<!-- TRANSFER BUTTON -->
+		<a class="btn-floating btn-large waves-effect waves-light floating-action" href="#!" onclick="transferCredits(credit)"><i class="material-icons">send</i></a>
 	</div>
 </div>
