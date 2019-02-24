@@ -95,7 +95,7 @@ class Service
 			return $response->setTemplate('message.ejs', [
 				"header"=>"Datos incorrectos",
 				"icon"=>"sentiment_very_dissatisfied",
-				"text" => "Hay un error con el @username o email de la persona a recibir, o con la cantidad a enviar. Puede que la persona no exista en Apretaste o que la cantidad no sea valida. Por favor verifique los datos e intente nuevamente.",
+				"text" => "Hay un error con el @username o email de la persona a recibir o con la cantidad a enviar. Puede que la persona no exista en Apretaste o que la cantidad no sea válida. Por favor verifique los datos e intente nuevamente.",
 				"button" => ["href"=>"CREDITO TRANSFERIR", "caption"=>"Transferir"]]);
 		}
 
@@ -139,7 +139,7 @@ class Service
 			return $response->setTemplate('message.ejs', [
 				"header"=>"Error inesperado",
 				"icon"=>"sentiment_very_dissatisfied",
-				"text" => "Tuvimos un error procesando su transferencia, o puede que esta transferencia halla expirado o ya se halla cobrado. Su credito no ha sido afectado.",
+				"text" => "Tuvimos un error procesando su transferencia, o puede que esta transferencia halla expirado o ya se halla cobrado. Su crédito no ha sido afectado.",
 				"button" => ["href"=>"CREDITO", "caption"=>"Mis Transferencias"]]);
 		}
 
@@ -165,7 +165,16 @@ class Service
 
 			// include and call the payment function
 			include_once Utils::getPathToService(strtolower($item->service)) . "/functions.php";
-			payment($payment);
+			$paymentResult = payment($payment);
+
+			// let the user know if there is the product is out of stock
+			if( ! $paymentResult) {
+				return $response->setTemplate('message.ejs', [
+					"header"=>"Producto no disponible",
+					"icon"=>"sentiment_very_dissatisfied",
+					"text" => "Encontramos un problema procesando su transferencia. Lo más posible es que el producto se halla agotado temporalmente. Su crédito no ha sido afectado.",
+					"button" => ["href"=>$item->service, "caption"=>"Ir al servicio"]]);
+			}
 		}
 
 		// transfer the credit and mark as DONE
@@ -177,7 +186,7 @@ class Service
 			COMMIT;");
 
 		// send a notification to the receiver
-		Utils::addNotification($receiver->id, "Usted ha recibido §{$transfer->amount} de credito", "{'command':'CREDITO'}", "attach_money");
+		Utils::addNotification($receiver->id, "Usted ha recibido §{$transfer->amount} de crédito", '{"command":"CREDITO"}', "attach_money");
 
 		// create response to send to the user
 		$content = [
