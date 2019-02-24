@@ -7,8 +7,8 @@
 
 		<p>Use su crédito para canjear por productos o servicios dentro de nuestra app, o transfiera créditos a otros usuarios.</p>
 
-		<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO OBTENER'})">Obtener crédito</a>
 		<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO TRANSFERIR'})">Transferir</a>
+		<a class="waves-effect waves-light btn-small grey" href="#" onclick="apretaste.send({command:'CREDITO OBTENER'})">Obtener crédito</a>
 
 		<% if(items.length) { %>
 			<h1>Transacciones</h1>
@@ -22,9 +22,9 @@
 				</tr>
 				<% items.forEach(function(item){ %>
 					<tr>
-						<td><%= item.name ? "Cange" : "Envio" %></td>
+						<td><%= item.name ? "Canje" : "Envío" %></td>
 						<td><%= formatDate(item.transfer_time) %></td>
-						<td><%= item.name ? item.name : item.username %></td>
+						<td><%= item.name ? item.name : '@'+item.username %></td>
 						<td>§<%= Number.parseFloat(item.amount).toFixed(2) %></td>
 					</tr>
 				<% }) %>
