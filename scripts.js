@@ -13,15 +13,18 @@ function formatDate(dateStr) {
 	return day + '/' + month + '/' + year + ' ' + hour + ':' + minutes + amOrPm;
 }
 
+function superParseFloat(value){
+	return parseFloat(value.replace('.',',')) * 1 + parseFloat(value.replace(',','.')) * 1;
+}
 //
 // starts a new credit transfer
 //
 function transferCredits(total) {
 	var username = $('#username').val().trim();
-	var amount = parseFloat($('#amount').val().trim());
+	var amount = superParseFloat($('#amount').val().trim());
 
 	// do not allow you to transfer more than what you have
-	if(amount > parseFloat(total)) {
+	if(amount > superParseFloat(total)) {
 		M.toast({html: 'Usted no tiene suficientes creditos para realizar esta transferencia'});
 		return false;
 	}
