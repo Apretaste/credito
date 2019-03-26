@@ -54,7 +54,7 @@ $(function(){
 
     if ((keyCode < 48 || keyCode > 60) && keyCode != 8 && keyCode != 190 && keyCode != 39 && keyCode != 37 && keyCode != 46 && keyCode != 9)
       return false;
-    
+
     if (e.keyCode === 188) {
       e.preventDefault();
       $(this).val($(this).val() + ".");
