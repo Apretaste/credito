@@ -14,8 +14,14 @@ function formatDate(dateStr) {
 }
 
 function superParseFloat(value){
-	var v =  parseFloat(value.replace('.',',')) * 1 + parseFloat(value.replace(',','.')) * 1;
-	if (strpos(v,0,1)=='.') v = '0' + v;
+  var v = value.replace(',','.');
+  if (strpos(v,1,1) == '.') v = '0' + v;
+
+  v = v.replace('.',',');
+  if (strpos(v,1,1) == ',') v = '0' + v;
+  
+	v =  parseFloat(v.replace('.',',')) * 1 + parseFloat(v.replace(',','.')) * 1;
+
 	return v;
 }
 //
