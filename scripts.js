@@ -56,12 +56,12 @@ $(function(){
       return false;
 
     if (e.keyCode === 188) {
-      e.preventDefault();
-      $(this).val($(this).val() + ".");
-      return true;
+     e.keyCode = 190; //e.preventDefault();
+      //$(this).val($(this).val() + ".");
+      //return true;
     }
 
-    if (strpos(value, '.') != false && keyCode == 190)
+    if (strpos(value, '.') != false && e.keyCode == 190)
       return false;
 
     return true;
