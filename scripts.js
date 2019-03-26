@@ -14,7 +14,9 @@ function formatDate(dateStr) {
 }
 
 function superParseFloat(value){
-	return parseFloat(value.replace('.',',')) * 1 + parseFloat(value.replace(',','.')) * 1;
+	var v =  parseFloat(value.replace('.',',')) * 1 + parseFloat(value.replace(',','.')) * 1;
+	if (strpos(v,0,1)=='.') v = '0' + v;
+	return v;
 }
 //
 // starts a new credit transfer
