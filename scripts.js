@@ -46,4 +46,24 @@ $(function(){
   var s = $('#amount').val().replace(/\,/g, '.');
   $('#amount').attr('type','number');
   $('#amount').val(s);
+
+  $("#amount").on("keydown", function (e) {
+
+    if (
+    $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 188, 190]) !== -1 ||
+    ($.inArray(e.keyCode, [65, 67, 88]) !== -1 && (e.ctrlKey === true || e.metaKey === true)) ||
+    (e.keyCode >= 35 && e.keyCode <= 39)) {
+
+    	if (e.keyCode === 110 || e.keyCode === 190) {
+          e.preventDefault();
+          $(this).val($(this).val() + ",");
+      }
+
+      return;
+    }
+    // block any non-number
+    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+      e.preventDefault();
+    }
+  });
 });
