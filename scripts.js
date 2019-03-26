@@ -42,6 +42,22 @@ function transferCredits(total) {
 		redirect: true});
 }
 
-$(function(){
+function strpos(haystack,needle,offset){
+  var i=(haystack+'').indexOf(needle,(offset||0));
+  return i===-1?false:i;
+}
 
+$(function(){
+  $("#amount").keydown(function(e){
+    var value = e.originalTarget.value;
+    var keyCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
+
+    if ((keyCode < 48 || keyCode > 60) && keyCode != 8 && keyCode != 190 && keyCode != 39 && keyCode != 37 && keyCode != 46 && keyCode != 9)
+      return false;
+
+    if (strpos(value, '.') != false && keyCode == 190)
+      return false;
+
+    return true;
+  });
 });
