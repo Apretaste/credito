@@ -43,5 +43,5 @@ function transferCredits(total) {
 }
 
 $(function(){
-	$("html").attr("lang","us");
+
 });
