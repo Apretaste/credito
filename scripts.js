@@ -64,6 +64,6 @@ $(function(){
     if (strpos(value, '.') != false && e.keyCode == 190)
       return false;
 
-    return true;
+    return e.keyCode;
   });
 });
