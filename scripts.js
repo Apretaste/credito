@@ -58,8 +58,10 @@ $(function(){
     if (strpos(value, '.') != false && (keyCode == 190 || keyCode == 188))
       return false;
 
-    $(this).val($(this).val().replace(',','.'));
-
     return true;
+  });
+
+  $("#amount").keyup(function(e){
+    $(this).val($(this).val().replace(',', '.'));
   });
 });
