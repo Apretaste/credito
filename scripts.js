@@ -15,11 +15,11 @@ function formatDate(dateStr) {
 
 function superParseFloat(value){
   var v = value.replace(',','.');
-  if (strpos(v,1,1) == '.') v = '0' + v;
+  if (v.indexOf('.') == 0) v = '0' + v;
 
   v = v.replace('.',',');
-  if (strpos(v,1,1) == ',') v = '0' + v;
-  
+  if (v.indexOf(',') == ',') v = '0' + v;
+
 	v =  parseFloat(v.replace('.',',')) * 1 + parseFloat(v.replace(',','.')) * 1;
 
 	return v;
