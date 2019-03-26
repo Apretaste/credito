@@ -41,3 +41,9 @@ function transferCredits(total) {
 		data: {"username":username, "price":amount},
 		redirect: true});
 }
+
+$(function(){
+  var s = $('#amount').val().replace(/\,/g, '.');
+  $('#amount').attr('type','number');
+  $('#amount').val(s);
+});
