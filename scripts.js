@@ -52,17 +52,13 @@ $(function(){
     var value = $(this).val();
     var keyCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
 
-    if ((keyCode < 48 || keyCode > 60) && keyCode != 8 && keyCode != 190 && keyCode != 39 && keyCode != 37 && keyCode != 46 && keyCode != 9)
+    if ((keyCode < 48 || keyCode > 60) && keyCode != 8 && keyCode != 190 && keyCode != 188 && keyCode != 39 && keyCode != 37 && keyCode != 46 && keyCode != 9)
       return false;
 
-    if (keyCode == 188) {
-      e.preventDefault();
-      $(this).val($(this).val() + ".");
-      return true;
-    }
-
-    if (strpos(value, '.') != false && keyCode == 190)
+    if (strpos(value, '.') != false && (keyCode == 190 || keyCode == 188))
       return false;
+
+    $(this).val($(this).val().replace(',','.'));
 
     return true;
   });
