@@ -20,7 +20,7 @@ function superParseFloat(value){
   v = v.replace('.',',');
   if (v.indexOf(',') == ',') v = '0' + v;
 
-	v =  parseFloat(v.replace('.',',')) * 1 + parseFloat(v.replace(',','.')) * 1;
+	v =  parseFloat(v.replace(',','.')) * 1;
 
 	return v;
 }
