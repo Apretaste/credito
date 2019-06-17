@@ -19,7 +19,7 @@ class Service
 			LEFT JOIN inventory B 
 			ON A.inventory_code = B.code 
 			JOIN person C 
-			ON A.receiver = C.email  
+			ON A.receiver_id = C.id  
 			WHERE A.sender_id = '{$request->person->id}'
 			AND A.transfered = '1' 
 			ORDER BY A.transfer_time DESC 
