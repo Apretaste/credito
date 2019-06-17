@@ -79,11 +79,11 @@ class Service
 		if (isset($request->input->data->item)) {
 			$sale = true;
 			$code = strtoupper($request->input->data->item);
-			$item = Connection::query("SELECT name, price, seller FROM inventory WHERE code = '$code'");
+			$item = Connection::query("SELECT name, price, seller, seller_id FROM inventory WHERE code = '$code'");
 			if ($item) {
 				$price   = $item[0]->price;
 				$article = $item[0]->name;
-				$person  = Utils::getPerson($item[0]->seller);
+				$person  = Utils::getPerson($item[0]->seller_id);
 			}
 		}
 
@@ -152,7 +152,7 @@ class Service
 		}
 
 		// get the Person objects for the receiver
-		$receiver = Utils::getPerson($transfer->receiver);
+		$receiver = Utils::getPerson($transfer->receiver_id);
 
 		// if is a purchase, execute the service method
 		$item = false;
