@@ -13,7 +13,7 @@ class Service
 	public function _main(Request $request, Response $response)
 	{
 		// get latest purchases
-		$items = Connection::query("
+		$items = q("
 			SELECT A.transfer_time, A.amount, B.name, C.username 
 			FROM transfer A 
 			LEFT JOIN inventory B 
@@ -79,7 +79,7 @@ class Service
 		if (isset($request->input->data->item)) {
 			$sale = true;
 			$code = strtoupper($request->input->data->item);
-			$item = Connection::query("SELECT name, price, seller, seller_id FROM inventory WHERE code = '$code'");
+			$item = q("SELECT name, price, seller, seller_id FROM inventory WHERE code = '$code'");
 			if ($item) {
 				$price   = $item[0]->price;
 				$article = $item[0]->name;
@@ -107,7 +107,7 @@ class Service
 
 		// save the transfer intention in the database
 		$confirmationHash = Utils::generateRandomHash();
-		Connection::query("
+		q("
 			INSERT INTO transfer (sender,sender_id, receiver, receiver_id, amount,confirmation_hash,inventory_code)
 			VALUES ('{$request->person->email}',{$request->person->id}, '{$person->email}',{$person->id},'$price','$confirmationHash','$code')");
 
@@ -134,7 +134,7 @@ class Service
 	public function _aceptar(Request $request, Response $response)
 	{
 		// get the transfer details to ensure the transfer is valid
-		$transfer = Connection::query("
+		$transfer = q("
 			SELECT * FROM transfer 
 			WHERE confirmation_hash = '{$request->input->data->hash}' 
 			AND transfer_time > (NOW()-INTERVAL 1 HOUR)
@@ -158,7 +158,7 @@ class Service
 		$item = false;
 		if ($transfer->inventory_code) {
 			// get the transfer row
-			$item = Connection::query("SELECT * FROM inventory WHERE code = '{$transfer->inventory_code}'")[0];
+			$item = q("SELECT * FROM inventory WHERE code = '{$transfer->inventory_code}'")[0];
 
 			// create the payment object
 			$payment         = new Payment();
@@ -187,15 +187,7 @@ class Service
 		}
 
 		// transfer the credit and mark as DONE
-		Connection::query("
-			START TRANSACTION;
-			UPDATE person SET credit=credit-{$transfer->amount} WHERE id = '{$request->person->id}';
-			UPDATE person SET credit=credit+{$transfer->amount} WHERE id = '{$transfer->receiver_id}';
-			UPDATE transfer SET transfered=1 WHERE id='{$transfer->id}';
-			COMMIT;");
-
-		// send a notification to the receiver
-		Utils::addNotification($receiver->id, "Usted ha recibido §{$transfer->amount} de crédito", '{"command":"CREDITO"}', "attach_money");
+		Utils::addCredit($transfer->amount, 'TRANSFER', $transfer->receiver_id, $request->person->id, $transfer->id ,"Usted ha recibido §{$transfer->amount} de crédito de @{$request->person->username}");
 
 		// create response to send to the user
 		$content = [
