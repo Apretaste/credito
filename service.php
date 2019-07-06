@@ -156,7 +156,9 @@ class Service
 
 		// if is a purchase, execute the service method
 		$item = false;
+		$reason = 'TRANSFER';
 		if ($transfer->inventory_code) {
+			$reason = $transfer->inventory_code;
 			// get the transfer row
 			$item = q("SELECT * FROM inventory WHERE code = '{$transfer->inventory_code}'")[0];
 
@@ -187,7 +189,7 @@ class Service
 		}
 
 		// transfer the credit and mark as DONE
-		Utils::addCredit($transfer->amount, 'TRANSFER', $transfer->receiver_id, $request->person->id, $transfer->id ,"Usted ha recibido §{$transfer->amount} de crédito de @{$request->person->username}");
+		Utils::addCredit($transfer->amount, $reason, $transfer->receiver_id, $request->person->id, $transfer->id ,"Usted ha recibido §{$transfer->amount} de crédito de @{$request->person->username}");
 
 		// create response to send to the user
 		$content = [
