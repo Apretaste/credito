@@ -24,14 +24,16 @@
 					<tr>
 						<td><%= item.name ? "Canje" : (item.type=='Recibido' ? 'Ganado' : "Envío") %></td>
 						<td><%= formatDate(item.transfer_time) %></td>
-						<td>
+						<td >
 							<% if (item.type=='Enviado') { %>
-								 <i class="material-icons red">arrow_forward</i> <%= item.name ? item.name : '@'+item.username %>
+								 <%= item.name ? item.name : '@'+item.username %>
 							<% } else { %>
-								 <i class="material-icons green">arrow_back</i> @<%= item.sender_username %>
+								 @<%= item.sender_username %>
 							<% }%>
 						</td>
-						<td>§<%= Number.parseFloat(item.amount).toFixed(2) %></td>
+						<td <% if (item.type=='Enviado') { %> class="red" <%} else {%>class="green"<% } %>>
+							<% if (item.type=='Enviado') { %> - <%} else {%> + <% } %>§<%= Number.parseFloat(item.amount).toFixed(2) %>
+						</td>
 					</tr>
 				<% }) %>
 			</table>
