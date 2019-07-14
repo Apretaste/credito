@@ -17,14 +17,20 @@
 				<tr>
 					<th>Tipo</th>
 					<th>Fecha</th>
-					<th>Para</th>
+					<th>Para/De</th>
 					<th>Costo</th>
 				</tr>
 				<% items.forEach(function(item){ %>
 					<tr>
 						<td><%= item.name ? "Canje" : "Envío" %></td>
 						<td><%= formatDate(item.transfer_time) %></td>
-						<td><%= item.name ? item.name : '@'+item.username %></td>
+						<td>
+							<% if (item.type=='Enviado') { %>
+								<%= item.name ? item.name : '@'+item.username %>
+							<% } else { %>
+								@#<%= item.sender_username %>
+							<% }%>
+						</td>
 						<td>§<%= Number.parseFloat(item.amount).toFixed(2) %></td>
 					</tr>
 				<% }) %>

@@ -14,13 +14,18 @@ class Service
 	{
 		// get latest purchases
 		$items = q("
-			SELECT A.transfer_time, A.amount, B.name, C.username 
+			SELECT A.transfer_time, A.amount, B.name, C.username, 
+			       CASE 
+			           WHEN A.sender_id = '{$request->person->id}' THEN 'Enviado'
+			           WHEN A.receiver_id = '{$request->person->id}' THEN 'Recibido'
+			       END AS type,
+			       (SELECT username FROM person where person.id = A.sender_id) as sender_username
 			FROM transfer A 
 			LEFT JOIN inventory B 
 			ON A.inventory_code = B.code 
 			JOIN person C 
 			ON A.receiver_id = C.id  
-			WHERE A.sender_id = '{$request->person->id}'
+			WHERE (A.sender_id = '{$request->person->id}' OR A.receiver_id = '{$request->person->id}')
 			AND A.transfered = '1' 
 			ORDER BY A.transfer_time DESC 
 			LIMIT 50");
@@ -90,7 +95,7 @@ class Service
 		// if this is a transfer, get params from the params
 		if (isset($request->input->data->username) && isset($request->input->data->price)) {
 			$sale     = false;
-			$price    = floatval($request->input->data->price);
+			$price    = (float) $request->input->data->price;
 			$username = trim($request->input->data->username, "@");
 			$person   = Utils::getPerson($username);
 		}
