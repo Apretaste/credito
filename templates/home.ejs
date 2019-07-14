@@ -1,7 +1,7 @@
 <div class="row">
 	<div class="col s12">
+		<small>Su crédito</small>
 		<h1>
-			Su crédito<br/>
 			<span class="green-text">§<%= Number.parseFloat(credit).toFixed(2) %></span>
 		</h1>
 
@@ -15,14 +15,14 @@
 
 			<table class="striped">
 				<tr>
-					<th>Tipo</th>
+					<th></th>
 					<th>Fecha</th>
 					<th>Para/De</th>
 					<th>Costo</th>
 				</tr>
 				<% items.forEach(function(item){ %>
 					<tr>
-						<td><%= item.name ? "Canje" : (item.type=='Recibido' ? 'Ganado' : "Envío") %></td>
+						<td><%= item.name ? "Canje" : (item.type=='Recibido' ? 'Recibido' : "Enviado") %></td>
 						<td><%= formatDate(item.transfer_time) %></td>
 						<td >
 							<% if (item.type=='Enviado') { %>
