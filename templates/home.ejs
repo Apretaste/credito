@@ -26,7 +26,7 @@
 						<td><%= formatDate(item.transfer_time) %></td>
 						<td>
 							<% if (item.type=='Enviado') { %>
-								 <i class="material-icons green">arrow_forward</i> <%= item.name ? item.name : '@'+item.username %>
+								 <i class="material-icons red">arrow_forward</i> <%= item.name ? item.name : '@'+item.username %>
 							<% } else { %>
 								 <i class="material-icons green">arrow_back</i> @<%= item.sender_username %>
 							<% }%>
