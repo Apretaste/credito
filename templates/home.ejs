@@ -22,13 +22,13 @@
 				</tr>
 				<% items.forEach(function(item){ %>
 					<tr>
-						<td><%= item.name ? "Canje" : "Envío" %></td>
+						<td><%= item.name ? "Canje" : (item.type=='Recibido' ? 'Ganado' : "Envío") %></td>
 						<td><%= formatDate(item.transfer_time) %></td>
 						<td>
 							<% if (item.type=='Enviado') { %>
-								<%= item.name ? item.name : '@'+item.username %>
+								 <i class="material-icons green">arrow_forward</i> <%= item.name ? item.name : '@'+item.username %>
 							<% } else { %>
-								@#<%= item.sender_username %>
+								 <i class="material-icons green">arrow_back</i> @<%= item.sender_username %>
 							<% }%>
 						</td>
 						<td>§<%= Number.parseFloat(item.amount).toFixed(2) %></td>
