@@ -31,8 +31,8 @@
 								 @<%= item.sender_username %>
 							<% }%>
 						</td>
-						<td <% if (item.type=='Enviado') { %> class="red" <%} else {%>class="green"<% } %>>
-							<% if (item.type=='Enviado') { %> - <%} else {%> + <% } %>§<%= Number.parseFloat(item.amount).toFixed(2) %>
+						<td <% if (item.type=='Enviado') { %> class="red-text" <%} else {%>class="green-text"<% } %>>
+							<% if (item.type=='Enviado') { %> -<%} else {%> +<% } %>§<%= Number.parseFloat(item.amount).toFixed(2) %>
 						</td>
 					</tr>
 				<% }) %>
