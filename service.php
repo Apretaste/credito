@@ -1,43 +1,19 @@
 <?php
 
-class Service
+use Apretaste\Money;
+
+class CreditoService extends ApretasteService
 {
 
 	/**
 	 * Main function
-	 *
-	 * @param Request
-	 *
-	 * @return Response
 	 */
-	public function _main(Request $request, Response $response)
+	public function _main(): void
 	{
-		// get latest purchases
-		$items = q("
-			SELECT A.transfer_time, A.amount, B.name, C.username, 
-			       CASE 
-			           WHEN A.sender_id = '{$request->person->id}' THEN 'Enviado'
-			           WHEN A.receiver_id = '{$request->person->id}' THEN 'Recibido'
-			       END AS type,
-			       (SELECT username FROM person where person.id = A.sender_id) as sender_username
-			FROM transfer A 
-			LEFT JOIN inventory B 
-			ON A.inventory_code = B.code 
-			JOIN person C 
-			ON A.receiver_id = C.id  
-			WHERE (A.sender_id = '{$request->person->id}' OR A.receiver_id = '{$request->person->id}')
-			AND A.transfered = '1' 
-			ORDER BY A.transfer_time DESC 
-			LIMIT 50");
-
-		// prepare data for the view
-		$content = [
-			"credit" => $request->person->credit,
-			"items"  => $items,
-		];
-
-		// send data to the template
-		$response->setTemplate("home.ejs", $content);
+		$this->response->setTemplate("home.ejs", [
+            'credit' => $this->request->person->credit,
+            'items'  => Money::getTransfersOf($this->request->person->id)
+        ]);
 	}
 
 	/**
