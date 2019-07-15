@@ -13,12 +13,6 @@
 			<h1>Transacciones</h1>
 
 			<table class="striped">
-				<tr>
-					<th></th>
-					<th>Fecha</th>
-					<th>Para/De</th>
-					<th>Costo</th>
-				</tr>
 				<% items.forEach(function(item){ %>
 					<tr>
 						<td><%= item.name ? "Canje" : (item.type=='Recibido' ? 'Recibido' : "Enviado") %></td>
