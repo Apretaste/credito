@@ -4,7 +4,7 @@
 			<span class="green-text">§<%= Number.parseFloat(credit).toFixed(2) %></span>
 		</h1>
 
-		<p>Use su crédito para canjear por productos o servicios dentro de nuestra app, o transfiera créditos a otros usuarios.</p>
+		<p>Use su crédito para comporar dentro de la app, o transfiera créditos a otros usuarios.</p>
 
 		<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO TRANSFERIR'})">Transferir</a>
 		<a class="waves-effect waves-light btn-small grey" href="#" onclick="apretaste.send({command:'CREDITO OBTENER'})">Obtener crédito</a>
@@ -15,8 +15,13 @@
 			<table class="striped">
 				<% items.forEach(function(item){ %>
 					<tr>
-						<td><%= item.name ? "Canje" : (item.type=='Recibido' ? 'Recibido' : "Enviado") %></td>
-						<td><%= formatDate(item.transfer_time) %></td>
+						<td><%= item.name ? "Canje" : (item.type=='Recibido' ? 'Recibido' : "Enviado") %><br/>
+						<span class = "nowrap">
+							<small style="color:gray;">
+								<%= formatDate(item.transfer_time) %>
+							</small>
+						</span>
+						</td>
 						<td >
 							<% if (item.type=='Enviado') { %>
 								 <%= item.name ? item.name : '@'+item.username %>
@@ -26,6 +31,9 @@
 						</td>
 						<td <% if (item.type=='Enviado') { %> class="red-text" <%} else {%>class="green-text"<% } %>>
 							<% if (item.type=='Enviado') { %> -<%} else {%> +<% } %>§<%= Number.parseFloat(item.amount).toFixed(2) %>
+						</td>
+						<td>
+							<%= item.inventory_code %>
 						</td>
 					</tr>
 				<% }) %>

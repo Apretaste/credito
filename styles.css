@@ -2,3 +2,6 @@
 	font-size: smaller;
 	margin-top: 40px;
 }
+.nowrap{
+	text-wrap: none;
+}
