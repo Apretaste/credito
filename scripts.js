@@ -13,17 +13,18 @@ function formatDate(dateStr) {
 	return day + '/' + month + '/' + year + ' ' + hour + ':' + minutes + amOrPm;
 }
 
-function superParseFloat(value){
-  var v = value.replace(',','.');
-  if (v.indexOf('.') == 0) v = '0' + v;
-
-  v = v.replace('.',',');
-  if (v.indexOf(',') == ',') v = '0' + v;
-
+//
+// super parse a float number
+//
+function superParseFloat(value) {
+	var v = value.replace(',','.');
+	if (v.indexOf('.') == 0) v = '0' + v;
+	v = v.replace('.',',');
+	if (v.indexOf(',') == ',') v = '0' + v;
 	v =  parseFloat(v.replace(',','.')) * 1;
-
 	return v;
 }
+
 //
 // starts a new credit transfer
 //
@@ -47,29 +48,32 @@ function transferCredits(total) {
 	apretaste.send({
 		command: "CREDITO PROCESAR", 
 		data: {"username":username, "price":amount},
-		redirect: true});
+		redirect: true
+	});
 }
 
-function strpos(haystack,needle,offset){
-  var i=(haystack+'').indexOf(needle,(offset||0));
-  return i===-1?false:i;
+//
+// get the position of a char in a string 
+//
+function strpos(haystack, needle, offset) {
+	var i=(haystack+'').indexOf(needle,(offset||0));
+	return i===-1?false:i;
 }
 
+//
+// add key events when the service starts
+//
 $(function(){
-  $("#amount").keydown(function(e){
-    var value = $(this).val();
-    var keyCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
+	$("#amount").keydown(function(e){
+		var value = $(this).val();
+		var keyCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
 
-    if ((keyCode < 48 || keyCode > 60) && keyCode != 8 && keyCode != 190 && keyCode != 188 && keyCode != 39 && keyCode != 37 && keyCode != 46 && keyCode != 9)
-      return false;
+		if ((keyCode < 48 || keyCode > 60) && keyCode != 8 && keyCode != 190 && keyCode != 188 && keyCode != 39 && keyCode != 37 && keyCode != 46 && keyCode != 9) return false;
+		if (strpos(value, '.') != false && (keyCode == 190 || keyCode == 188)) return false;
+		return true;
+	});
 
-    if (strpos(value, '.') != false && (keyCode == 190 || keyCode == 188))
-      return false;
-
-    return true;
-  });
-
-  $("#amount").keyup(function(e){
-    $(this).val($(this).val().replace(',', '.'));
-  });
+	$("#amount").keyup(function(e){
+		$(this).val($(this).val().replace(',', '.'));
+	});
 });

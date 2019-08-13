@@ -4,7 +4,7 @@
 			<span class="green-text">§<%= Number.parseFloat(credit).toFixed(2) %></span>
 		</h1>
 
-		<p>Use su crédito para comporar dentro de la app, o transfiera créditos a otros usuarios.</p>
+		<p>Use su crédito para comprar dentro de la app, o transfiera créditos a otros usuarios.</p>
 
 		<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO TRANSFERIR'})">Transferir</a>
 		<a class="waves-effect waves-light btn-small grey" href="#" onclick="apretaste.send({command:'CREDITO OBTENER'})">Obtener crédito</a>
@@ -12,31 +12,29 @@
 		<% if(items.length) { %>
 			<h1>Transacciones</h1>
 
-			<table class="striped">
-				<% items.forEach(function(item){ %>
+			<table class="striped"0>
+				<% for(var i=0; i<items.length; i++) { 
+					var item = items[i]; console.log(item); %>
 					<tr>
-						<td><%= item.name ? "Canje" : (item.type=='Recibido' ? 'Recibido' : "Enviado") %><br/>
-						<span class = "nowrap">
+						<td><%= item.source == 'purchase' ? "Canje" : (item.type=='Recibido' ? 'Recibido' : "Enviado") %><br/>
+						<span class="nowrap">
 							<small style="color:gray;">
 								<%= formatDate(item.transfer_time) %>
 							</small>
 						</span>
 						</td>
 						<td >
-							<% if (item.type=='Enviado') { %>
-								 <%= item.name ? item.name : '@'+item.username %>
+							<% if(item.type=='Enviado') { %>
+								<%= item.source == 'purchase' ? item.name : 'Transferencia a @'+item.username %>
 							<% } else { %>
-								 @<%= item.sender_username %>
-							<% }%>
+								Recibido de @<%= item.sender_username %>
+							<% } %>
 						</td>
-						<td <% if (item.type=='Enviado') { %> class="red-text" <%} else {%>class="green-text"<% } %>>
-							<% if (item.type=='Enviado') { %> -<%} else {%> +<% } %>§<%= Number.parseFloat(item.amount).toFixed(2) %>
-						</td>
-						<td>
-							<%= item.inventory_code %>
+						<td <% if(item.type=='Enviado') { %> class="red-text" <%} else {%>class="green-text"<% } %>>
+							<% if(item.type=='Enviado') { %> -<%} else {%> +<% } %>§<%= Number.parseFloat(item.amount).toFixed(2) %>
 						</td>
 					</tr>
-				<% }) %>
+				<% } %>
 			</table>
 		<% } %>
 	</div>
