@@ -14,7 +14,7 @@
 
 			<table class="striped"0>
 				<% for(var i=0; i<items.length; i++) { 
-					var item = items[i]; console.log(item); %>
+					var item = items[i]; %>
 					<tr>
 						<td><%= item.source == 'purchase' ? "Canje" : (item.type=='Recibido' ? 'Recibido' : "Enviado") %><br/>
 						<span class="nowrap">
