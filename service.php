@@ -4,16 +4,22 @@ use Apretaste\Money;
 
 class CreditoService extends ApretasteService
 {
-
 	/**
 	 * Main function
 	 */
 	public function _main(): void
 	{
-		$this->response->setTemplate("home.ejs", [
-            'credit' => $this->request->person->credit,
-            'items'  => Money::getTransfersOf($this->request->person->id)
-        ]);
+		// get all transfers
+		$transfers = Money::getTransfersOf($this->request->person->id);
+
+		// create response data
+		$content = [
+			'credit' => $this->request->person->credit,
+			'items' => $transfers
+		];
+
+		// send response
+		$this->response->setTemplate("home.ejs", $content);
 	}
 
 	/**
@@ -60,45 +66,45 @@ class CreditoService extends ApretasteService
 		if (isset($request->input->data->item)) {
 			$sale = true;
 			$code = strtoupper($request->input->data->item);
-			$item = q("SELECT name, price, seller, seller_id FROM inventory WHERE code = '$code'");
+			$item = Connection::query("SELECT name, price, seller, seller_id FROM inventory WHERE code = '$code'");
 			if ($item) {
-				$price   = $item[0]->price;
+				$price = $item[0]->price;
 				$article = $item[0]->name;
-				$person  = Utils::getPerson($item[0]->seller_id);
+				$person = Utils::getPerson($item[0]->seller_id);
 			}
 		}
 
 		// if this is a transfer, get params from the params
 		if (isset($request->input->data->username) && isset($request->input->data->price)) {
-			$sale     = false;
-			$price    = (float) $request->input->data->price;
+			$sale = false;
+			$price = (float) $request->input->data->price;
 			$username = trim($request->input->data->username, "@");
-			$person   = Utils::getPerson($username);
+			$person = Utils::getPerson($username);
 		}
 
 		// do not let pass invalid information or invalid credit
 		if (empty($person) || empty($price) || $request->person->credit < $price) {
 			return $response->setTemplate('message.ejs', [
 				"header" => "Datos incorrectos",
-				"icon"   => "sentiment_very_dissatisfied",
-				"text"   => "Hay un error con el @username o email de la persona a recibir o con la cantidad a enviar. Puede que la persona no exista en Apretaste o que la cantidad no sea válida. Por favor verifique los datos e intente nuevamente.",
+				"icon" => "sentiment_very_dissatisfied",
+				"text" => "Hay un error con el @username o email de la persona a recibir o con la cantidad a enviar. Puede que la persona no exista en Apretaste o que la cantidad no sea válida. Por favor verifique los datos e intente nuevamente.",
 				"button" => ["href" => "CREDITO TRANSFERIR", "caption" => "Transferir"],
 			]);
 		}
 
 		// save the transfer intention in the database
 		$confirmationHash = Utils::generateRandomHash();
-		q("
+		Connection::query("
 			INSERT INTO transfer (sender,sender_id, receiver, receiver_id, amount,confirmation_hash,inventory_code)
 			VALUES ('{$request->person->email}',{$request->person->id}, '{$person->email}',{$person->id},'$price','$confirmationHash','$code')");
 
 		// create the variables for the view
 		$content = [
-			"price"    => $price,
+			"price" => $price,
 			"receiver" => $person,
-			"article"  => $article,
-			"sale"     => $sale,
-			"hash"     => $confirmationHash,
+			"article" => $article,
+			"sale" => $sale,
+			"hash" => $confirmationHash,
 		];
 
 		// email the confirmation to transfer the credits
@@ -115,7 +121,7 @@ class CreditoService extends ApretasteService
 	public function _aceptar(Request $request, Response $response)
 	{
 		// get the transfer details to ensure the transfer is valid
-		$transfer = q("
+		$transfer = Connection::query("
 			SELECT * FROM transfer 
 			WHERE confirmation_hash = '{$request->input->data->hash}' 
 			AND transfer_time > (NOW()-INTERVAL 1 HOUR)
@@ -126,8 +132,8 @@ class CreditoService extends ApretasteService
 		if (!$transfer || $transfer->amount > $request->person->credit) {
 			return $response->setTemplate('message.ejs', [
 				"header" => "Error inesperado",
-				"icon"   => "sentiment_very_dissatisfied",
-				"text"   => "Tuvimos un error procesando su transferencia, o puede que esta transferencia halla expirado o ya se halla cobrado. Su crédito no ha sido afectado.",
+				"icon" => "sentiment_very_dissatisfied",
+				"text" => "Tuvimos un error procesando su transferencia, o puede que esta transferencia halla expirado o ya se halla cobrado. Su crédito no ha sido afectado.",
 				"button" => ["href" => "CREDITO", "caption" => "Mis Transferencias"],
 			]);
 		}
@@ -141,15 +147,15 @@ class CreditoService extends ApretasteService
 		if ($transfer->inventory_code) {
 			$reason = $transfer->inventory_code;
 			// get the transfer row
-			$item = q("SELECT * FROM inventory WHERE code = '{$transfer->inventory_code}'")[0];
+			$item = Connection::query("SELECT * FROM inventory WHERE code = '{$transfer->inventory_code}'")[0];
 
 			// create the payment object
-			$payment         = new Payment();
-			$payment->code   = $item->code;
-			$payment->price  = $item->price;
-			$payment->name   = $item->name;
+			$payment = new Payment();
+			$payment->code = $item->code;
+			$payment->price = $item->price;
+			$payment->name = $item->name;
 			$payment->seller = $receiver;
-			$payment->buyer  = $request->person;
+			$payment->buyer = $request->person;
 
 			// update the amount
 			$transfer->amount = $item->price;
@@ -162,8 +168,8 @@ class CreditoService extends ApretasteService
 			if (!$paymentResult) {
 				return $response->setTemplate('message.ejs', [
 					"header" => "Producto no disponible",
-					"icon"   => "sentiment_very_dissatisfied",
-					"text"   => "Encontramos un problema procesando su transferencia. Lo más posible es que el producto se halla agotado temporalmente. Su crédito no ha sido afectado.",
+					"icon" => "sentiment_very_dissatisfied",
+					"text" => "Encontramos un problema procesando su transferencia. Lo más posible es que el producto se halla agotado temporalmente. Su crédito no ha sido afectado.",
 					"button" => ["href" => $item->service, "caption" => "Ir al servicio"],
 				]);
 			}
@@ -174,9 +180,9 @@ class CreditoService extends ApretasteService
 
 		// create response to send to the user
 		$content = [
-			"amount"   => $transfer->amount,
+			"amount" => $transfer->amount,
 			"receiver" => $receiver,
-			"item"     => $item,
+			"item" => $item,
 		];
 
 		// send the receipt to the sender
