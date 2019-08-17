@@ -33,7 +33,7 @@
 							<% if (item.type=='Enviado') { %> -<%} else {%> +<% } %>§<%= Number.parseFloat(item.amount).toFixed(2) %>
 						</td>
 						<td>
-							<%= item.inventory_code %>
+							<%= item.inventory_name %>
 						</td>
 					</tr>
 				<% }) %>
