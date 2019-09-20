@@ -34,23 +34,30 @@ function superParseFloat(value) {
 function transferCredits(total) {
 	var username = $('#username').val().trim();
 	var amount = superParseFloat($('#amount').val().trim());
+	var reason = $('#reason').val().trim();
 
 	// do not allow you to transfer more than what you have
 	if(amount > superParseFloat(total)) {
-		M.toast({html: 'Usted no tiene suficientes creditos para realizar esta transferencia'});
+		M.toast({html: 'No tiene suficientes créditos'});
 		return false;
 	}
 
 	// do not allow empty username or amounts
 	if(username == '' || amount == 'NaN' || amount == 0) {
-		M.toast({html: 'Debe llenar ambos campos con valores validos antes de continuar'});
+		M.toast({html: 'Llene todos los campos correctamente'});
+		return false;
+	}
+
+	// force a valid reason
+	if(reason.length < 5) {
+		M.toast({html: 'Detalle la razón de esta transferencia'});
 		return false;
 	}
 
 	// start a new transfer
 	apretaste.send({
 		command: "CREDITO PROCESAR", 
-		data: {"username":username, "price":amount},
+		data: {"username":username, "price":amount, "reason":reason},
 		redirect: true
 	});
 }

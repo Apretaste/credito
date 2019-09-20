@@ -38,7 +38,6 @@ class CreditoService extends ApretasteService
 	 * Starts a new transfer
 	 *
 	 * @param Request
-	 *
 	 * @return Response
 	 */
 	public function _transferir(Request $request, Response $response)
@@ -54,13 +53,12 @@ class CreditoService extends ApretasteService
 	 *
 	 * @param Request
 	 * @param Response
-	 *
 	 * @return \Response
 	 */
 	public function _procesar(Request $request, Response $response)
 	{
 		// inicialize params
-		$person = $price = $code = $article = $sale = "";
+		$person = $price = $code = $article = $sale = $reason = "";
 
 		// if this is a purchase, get params from the item
 		if (isset($request->input->data->item)) {
@@ -79,6 +77,7 @@ class CreditoService extends ApretasteService
 			$sale = false;
 			$price = (float) $request->input->data->price;
 			$username = trim($request->input->data->username, "@");
+			$reason = $request->input->data->reason;
 			$person = Utils::getPerson($username);
 		}
 
@@ -95,8 +94,8 @@ class CreditoService extends ApretasteService
 		// save the transfer intention in the database
 		$confirmationHash = Utils::generateRandomHash();
 		Connection::query("
-			INSERT INTO transfer (sender,sender_id, receiver, receiver_id, amount,confirmation_hash,inventory_code)
-			VALUES ('{$request->person->email}',{$request->person->id}, '{$person->email}',{$person->id},'$price','$confirmationHash','$code')");
+			INSERT INTO transfer (sender, sender_id, receiver, receiver_id, amount, reason, confirmation_hash, inventory_code)
+			VALUES ('{$request->person->email}', {$request->person->id}, '{$person->email}', {$person->id}, '$price', '$reason', '$confirmationHash', '$code')");
 
 		// create the variables for the view
 		$content = [
