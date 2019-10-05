@@ -1,3 +1,7 @@
+$(document).ready(function(){
+	$('.modal').modal();
+});
+
 function pad(n, width, z) {
 	z = z || '0';
 	n = n + '';
@@ -16,9 +20,7 @@ function formatDate(dateStr) {
 	return day + '/' + month + '/' + year + ' ' + hour + ':' + minutes + amOrPm;
 }
 
-//
 // super parse a float number
-//
 function superParseFloat(value) {
 	var v = value.replace(',','.');
 	if (v.indexOf('.') == 0) v = '0' + v;
@@ -28,16 +30,42 @@ function superParseFloat(value) {
 	return v;
 }
 
-//
-// starts a new credit transfer
-//
-function transferCredits(total) {
-	var username = $('#username').val().trim();
+// show the modal popup
+function openModal (total) {
+	// validate the transfer
+	var data = validate();
+	if(!data) return false;
+
+	// open the modal
+	$('#modalUsername').html(data.username);
+	$('#modalAmount').html(data.amount);
+	$('#transferModal').modal('open');
+}
+
+// start a new transfer
+function transfer(total) {
+	// validate the transfer
+	var data = validate();
+	if(!data) return false;
+
+	// execute the transfer
+	apretaste.send({
+		command: "CREDITO TRANSFER", 
+		data: {"username":data.username, "price":data.amount, "reason":data.reason},
+		redirect: true
+	});
+}
+
+// validates a transfer
+function validate() {
+	// get all the values
+	var username = $('#username').val().trim().replace("@", "");
 	var amount = superParseFloat($('#amount').val().trim());
+	var total = superParseFloat($('#total').val().trim());
 	var reason = $('#reason').val().trim();
 
 	// do not allow you to transfer more than what you have
-	if(amount > superParseFloat(total)) {
+	if(amount > total) {
 		M.toast({html: 'No tiene suficientes créditos'});
 		return false;
 	}
@@ -54,25 +82,17 @@ function transferCredits(total) {
 		return false;
 	}
 
-	// start a new transfer
-	apretaste.send({
-		command: "CREDITO PROCESAR", 
-		data: {"username":username, "price":amount, "reason":reason},
-		redirect: true
-	});
+	// return validated JSON structure
+	return {username:username, amount:amount, reason:reason};
 }
 
-//
 // get the position of a char in a string 
-//
 function strpos(haystack, needle, offset) {
 	var i=(haystack+'').indexOf(needle,(offset||0));
 	return i===-1?false:i;
 }
 
-//
 // add key events when the service starts
-//
 $(function(){
 	$("#amount").keydown(function(e){
 		var value = $(this).val();

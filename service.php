@@ -1,25 +1,23 @@
 <?php
 
-use Apretaste\Money;
-
-class CreditoService extends ApretasteService
+class Service
 {
 	/**
 	 * Main function
 	 */
-	public function _main(): void
+	public function _main(Request $request, Response $response)
 	{
 		// get all transfers
-		$transfers = Money::getTransfersOf($this->request->person->id);
+		$transfers = MoneyNew::transactions($request->person->id);
 
 		// create response data
 		$content = [
-			'credit' => $this->request->person->credit,
+			'credit' => $request->person->credit,
 			'items' => $transfers
 		];
 
 		// send response
-		$this->response->setTemplate("home.ejs", $content);
+		$response->setTemplate("home.ejs", $content);
 	}
 
 	/**
@@ -40,151 +38,91 @@ class CreditoService extends ApretasteService
 	 * @param Request
 	 * @return Response
 	 */
-	public function _transferir(Request $request, Response $response)
+	public function _enviar(Request $request, Response $response)
 	{
 		$response->setCache("year");
-		$response->setTemplate('transfer.ejs', ["credit" => $request->person->credit]);
+		$response->setTemplate('enviar.ejs', ["credit" => $request->person->credit]);
 	}
 
 	/**
-	 * Starts a new transfer OR sale
-	 * for TRANSFER data:{username:@USERNAME, price:NUMBER}
-	 * for SALE data:{item:INVENTARY_CODE}
+	 * Execute a transfer
 	 *
 	 * @param Request
-	 * @param Response
-	 * @return \Response
-	 */
-	public function _procesar(Request $request, Response $response)
-	{
-		// inicialize params
-		$person = $price = $code = $article = $sale = $reason = "";
-
-		// if this is a purchase, get params from the item
-		if (isset($request->input->data->item)) {
-			$sale = true;
-			$code = strtoupper($request->input->data->item);
-			$item = Connection::query("SELECT name, price, seller, seller_id FROM inventory WHERE code = '$code'");
-			if ($item) {
-				$price = $item[0]->price;
-				$article = $item[0]->name;
-				$person = Utils::getPerson($item[0]->seller_id);
-			}
-		}
-
-		// if this is a transfer, get params from the params
-		if (isset($request->input->data->username) && isset($request->input->data->price)) {
-			$sale = false;
-			$price = (float) $request->input->data->price;
-			$username = trim($request->input->data->username, "@");
-			$reason = $request->input->data->reason;
-			$person = Utils::getPerson($username);
-		}
-
-		// do not let pass invalid information or invalid credit
-		if (empty($person) || empty($price) || $request->person->credit < $price) {
-			return $response->setTemplate('message.ejs', [
-				"header" => "Datos incorrectos",
-				"icon" => "sentiment_very_dissatisfied",
-				"text" => "Hay un error con el @username o email de la persona a recibir o con la cantidad a enviar. Puede que la persona no exista en Apretaste o que la cantidad no sea válida. Por favor verifique los datos e intente nuevamente.",
-				"button" => ["href" => "CREDITO TRANSFERIR", "caption" => "Transferir"],
-			]);
-		}
-
-		// save the transfer intention in the database
-		$confirmationHash = Utils::generateRandomHash();
-		Connection::query("
-			INSERT INTO transfer (sender, sender_id, receiver, receiver_id, amount, reason, confirmation_hash, inventory_code)
-			VALUES ('{$request->person->email}', {$request->person->id}, '{$person->email}', {$person->id}, '$price', '$reason', '$confirmationHash', '$code')");
-
-		// create the variables for the view
-		$content = [
-			"price" => $price,
-			"receiver" => $person,
-			"article" => $article,
-			"sale" => $sale,
-			"hash" => $confirmationHash,
-		];
-
-		// email the confirmation to transfer the credits
-		$response->setTemplate("confirmation.ejs", $content);
-	}
-
-	/**
-	 * Accepts the details of the transfer and submit
-	 *
-	 * @param Request
-	 *
 	 * @return Response
 	 */
-	public function _aceptar(Request $request, Response $response)
+	public function _transfer(Request $request, Response $response)
 	{
-		// get the transfer details to ensure the transfer is valid
-		$transfer = Connection::query("
-			SELECT * FROM transfer 
-			WHERE confirmation_hash = '{$request->input->data->hash}' 
-			AND transfer_time > (NOW()-INTERVAL 1 HOUR)
-			AND transfered = 0");
-		$transfer = empty($transfer) ? false : $transfer[0];
+		// get params for the transfer 
+		$amount = (float)$request->input->data->price;
+		$username = trim($request->input->data->username, "@");
+		$reason = $request->input->data->reason;
 
-		// error if the hash is invalid or the transaction was used already
-		if (!$transfer || $transfer->amount > $request->person->credit) {
+		// get the person who will receive the funds
+		$person = Utils::getPerson($username);
+ 
+		// send the transfer
+		try {
+			MoneyNew::send($request->person->id, $person->id, $amount, $reason);
+		} catch (Exception $e) {
 			return $response->setTemplate('message.ejs', [
 				"header" => "Error inesperado",
 				"icon" => "sentiment_very_dissatisfied",
-				"text" => "Tuvimos un error procesando su transferencia, o puede que esta transferencia halla expirado o ya se halla cobrado. Su crédito no ha sido afectado.",
-				"button" => ["href" => "CREDITO", "caption" => "Mis Transferencias"],
+				"text" => "Encontramos un error inesperado transfiriendo su crédito. Por favor intente nuevamente.",
+				"button" => ["href" => "CREDITO TRANSFERIR", "caption" => "Transferir"]
 			]);
 		}
 
-		// get the Person objects for the receiver
-		$receiver = Utils::getPerson($transfer->receiver_id);
+		// return ok message
+		return $response->setTemplate('message.ejs', [
+			"header" => "Crédito enviado",
+			"icon" => "pan_tool",
+			"text" => "¡Chócala! Usted ha enviado §$amount a @$username correctamente. Esta transfencia se mostrará en sus transacciones.",
+			"button" => ["href" => "CREDITO", "caption" => "Transacciones"]
+		]);
+	}
 
-		// if is a purchase, execute the service method
-		$item = false;
-		$reason = 'TRANSFER';
-		if ($transfer->inventory_code) {
-			$reason = $transfer->inventory_code;
-			// get the transfer row
-			$item = Connection::query("SELECT * FROM inventory WHERE code = '{$transfer->inventory_code}'")[0];
+	/**
+	 * Execute a payment
+	 *
+	 * @param Request
+	 * @return Response
+	 */
+	public function _purchase(Request $request, Response $response)
+	{
+		// get params for the purchase
+		$buyer = $request->person->id;
+		$inventory = strtoupper($request->input->data->item);
 
-			// create the payment object
-			$payment = new Payment();
-			$payment->code = $item->code;
-			$payment->price = $item->price;
-			$payment->name = $item->name;
-			$payment->seller = $receiver;
-			$payment->buyer = $request->person;
-
-			// update the amount
-			$transfer->amount = $item->price;
-
-			// include and call the payment function
-			include_once Utils::getPathToService(strtolower($item->service)) . "/functions.php";
-			$paymentResult = payment($payment);
-
-			// let the user know if there is the product is out of stock
-			if (!$paymentResult) {
-				return $response->setTemplate('message.ejs', [
-					"header" => "Producto no disponible",
-					"icon" => "sentiment_very_dissatisfied",
-					"text" => "Encontramos un problema procesando su transferencia. Lo más posible es que el producto se halla agotado temporalmente. Su crédito no ha sido afectado.",
-					"button" => ["href" => $item->service, "caption" => "Ir al servicio"],
-				]);
-			}
+		// send the transfer
+		try {
+			$pay = MoneyNew::buy($buyer, $inventory);
+		} catch (Exception $e) {
+			return $response->setTemplate('message.ejs', [
+				"header" => "Error inesperado",
+				"icon" => "sentiment_very_dissatisfied",
+				"text" => "Encontramos un error en su compra. Puede que los productos se hallan acabado o el vendedor no este activo en este momento. Por favor intente nuevamente y si el problema persiste, consulte al soporte.",
+				"button" => ["href" => "CREDITO", "caption" => "Ver crédito"]
+			]);
 		}
 
-		// transfer the credit and mark as DONE
-		Utils::addCredit($transfer->amount, $reason, $transfer->receiver_id, $request->person->id, $transfer->id ,"Usted ha recibido §{$transfer->amount} de crédito de @{$request->person->username}");
+		// return ok message
+		return $response->setTemplate('message.ejs', [
+			"header" => "Compra realizada",
+			"icon" => "pan_tool",
+			"text" => "¡Chócala! Usted ha canjeado §{$pay->price} por {$pay->name} correctamente. Esta transfencia se mostrará en sus transacciones.",
+			"button" => ["href" => "CREDITO", "caption" => "Transacciones"]
+		]);
+	}
 
-		// create response to send to the user
-		$content = [
-			"amount" => $transfer->amount,
-			"receiver" => $receiver,
-			"item" => $item,
-		];
-
-		// send the receipt to the sender
-		$response->setTemplate("receipt.ejs", $content);
+	/**
+	 * ALIAS for _purchase, for backwards compatibility.
+	 * NOTE: Delete when all other services call _purchase
+	 *
+	 * @param Request
+	 * @param Response
+	 */
+	public function _procesar(Request $request, Response $response)
+	{
+		return $this->_purchase($request, $response);
 	}
 }

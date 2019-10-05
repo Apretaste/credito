@@ -6,38 +6,28 @@
 
 		<p>Use su crédito para comprar dentro de la app, o transfiera créditos a otros usuarios.</p>
 
-		<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO TRANSFERIR'})">Transferir</a>
+		<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO ENVIAR'})">Transferir</a>
 		<a class="waves-effect waves-light btn-small grey" href="#" onclick="apretaste.send({command:'CREDITO OBTENER'})">Obtener crédito</a>
 
 		<% if(items.length) { %>
 			<h1>Transacciones</h1>
-
 			<table class="striped"0>
-				<% for(var i=0; i<items.length; i++) {
-					var item = items[i]; %>
+				<% items.forEach(function(item){ %>
 					<tr>
-						<td><%= item.source == 'purchase' ? "Canje" : (item.type=='Recibido' ? 'Recibido' : "Enviado") %><br/>
-						<span class="nowrap">
-							<small style="color:gray;">
-								<%= formatDate(item.transfer_time) %>
-							</small>
-						</span>
+						<td>
+							<%= item.type == 'purchase' ? "Canje" : (item.origin=='received' ? 'Recibido' : "Enviado") %><br/>
+							<small class="nowrap text-gray"><%= formatDate(item.datetime) %></small>
 						</td>
-						<td >
-							<% if(item.type=='Enviado') { %>
-								<%= item.source == 'purchase' ? item.name : 'Transferencia a @'+item.username %>
+						<td><%= item.desc %></td>
+						<td>
+							<% if(item.origin == 'sent') { %>
+								<span class="red-text">-§<%= Number.parseFloat(item.amount).toFixed(2) %>
 							<% } else { %>
-								Recibido de @<%= item.sender_username %>
+								<span class="green-text">+§<%= Number.parseFloat(item.amount).toFixed(2) %>
 							<% } %>
 						</td>
-						<td <% if (item.type=='Enviado') { %> class="red-text" <%} else {%>class="green-text"<% } %>>
-							<% if (item.type=='Enviado') { %> -<%} else {%> +<% } %>§<%= Number.parseFloat(item.amount).toFixed(2) %>
-						</td>
-						<td>
-							<%= item.inventory_name %>
-						</td>
 					</tr>
-				<% } %>
+				<% }) %>
 			</table>
 		<% } %>
 	</div>
