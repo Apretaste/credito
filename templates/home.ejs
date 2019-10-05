@@ -16,7 +16,7 @@
 					<tr>
 						<td>
 							<%= item.type == 'purchase' ? "Canje" : (item.origin=='received' ? 'Recibido' : "Enviado") %><br/>
-							<small class="nowrap text-gray"><%= formatDate(item.datetime) %></small>
+							<small class="nowrap text-gray"><%= item.datetime %></small>
 						</td>
 						<td><%= item.desc %></td>
 						<td>

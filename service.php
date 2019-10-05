@@ -10,6 +10,18 @@ class Service
 		// get all transfers
 		$transfers = MoneyNew::transactions($request->person->id);
 
+		// clean the transfers array
+		foreach ($transfers as $t) {
+			unset($t->sender_id);
+			unset($t->sender_username);
+			unset($t->receiver_id);
+			unset($t->receiver_username);
+			unset($t->reason);
+			unset($t->inventory_code);
+			unset($t->inventory_name);
+			$t->datetime = date("d/m/Y g:ia", strtotime($t->datetime));
+		}
+
 		// create response data
 		$content = [
 			'credit' => $request->person->credit,
