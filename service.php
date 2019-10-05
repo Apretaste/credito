@@ -125,16 +125,4 @@ class Service
 			"button" => ["href" => "CREDITO", "caption" => "Transacciones"]
 		]);
 	}
-
-	/**
-	 * ALIAS for _purchase, for backwards compatibility.
-	 * NOTE: Delete when all other services call _purchase
-	 *
-	 * @param Request
-	 * @param Response
-	 */
-	public function _procesar(Request $request, Response $response)
-	{
-		return $this->_purchase($request, $response);
-	}
 }
