@@ -109,6 +109,10 @@ class Service
 		try {
 			$pay = MoneyNew::buy($buyer, $inventory);
 		} catch (Exception $e) {
+			// create the alert
+			Utils::createAlert($e->getMessage());
+
+			// let the user know
 			return $response->setTemplate('message.ejs', [
 				"header" => "Error inesperado",
 				"icon" => "sentiment_very_dissatisfied",
