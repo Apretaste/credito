@@ -66,12 +66,12 @@ class Service
 	{
 		// get params for the transfer 
 		$amount = (float)$request->input->data->price;
-		$username = trim($request->input->data->username, "@");
+		$username = $request->input->data->username;
 		$reason = $request->input->data->reason;
 
 		// get the person who will receive the funds
 		$person = Utils::getPerson($username);
- 
+
 		// send the transfer
 		try {
 			MoneyNew::send($request->person->id, $person->id, $amount, $reason);
@@ -88,7 +88,7 @@ class Service
 		return $response->setTemplate('message.ejs', [
 			"header" => "Crédito enviado",
 			"icon" => "pan_tool",
-			"text" => "¡Chócala! Usted ha enviado §$amount a @$username correctamente. Esta transfencia se mostrará en sus transacciones.",
+			"text" => "¡Chócala! Usted ha enviado §$amount a @{$person->username} correctamente. Esta transfencia se mostrará en sus transacciones.",
 			"button" => ["href" => "CREDITO", "caption" => "Transacciones"]
 		]);
 	}

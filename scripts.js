@@ -41,7 +41,7 @@ function transfer(total) {
 // validates a transfer
 function validate() {
 	// get all the values
-	var username = $('#username').val().trim().replace("@", "");
+	var username = $('#username').val().trim();
 	var amount = superParseFloat($('#amount').val().trim());
 	var total = superParseFloat($('#total').val().trim());
 	var reason = $('#reason').val().trim();
