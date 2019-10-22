@@ -53,7 +53,7 @@ function validate() {
 	}
 
 	// do not allow empty username or amounts
-	if(username == '' || amount == 'NaN' || amount == 0) {
+	if(username == '' || amount == 'NaN' || amount <= 0) {
 		M.toast({html: 'Llene todos los campos correctamente'});
 		return false;
 	}
