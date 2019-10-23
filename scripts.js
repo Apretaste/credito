@@ -19,7 +19,7 @@ function openModal (total) {
 	if(!data) return false;
 
 	// open the modal
-	$('#modalUsername').html(data.username);
+	$('#modalUsername').html('@'+data.username);
 	$('#modalAmount').html(data.amount);
 	$('#transferModal').modal('open');
 }
@@ -45,6 +45,9 @@ function validate() {
 	var amount = superParseFloat($('#amount').val().trim());
 	var total = superParseFloat($('#total').val().trim());
 	var reason = $('#reason').val().trim();
+
+	// remove @ for @usernames
+	if(username[0] == '@') username = username.slice(1);
 
 	// do not allow you to transfer more than what you have
 	if(amount > total) {
