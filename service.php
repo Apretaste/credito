@@ -80,7 +80,7 @@ class Service
 				"header" => "Error inesperado",
 				"icon" => "sentiment_very_dissatisfied",
 				"text" => "Encontramos un error inesperado transfiriendo su crédito. Por favor intente nuevamente.",
-				"button" => ["href" => "CREDITO TRANSFERIR", "caption" => "Transferir"]
+				"button" => ["href" => "CREDITO ENVIAR", "caption" => "Transferir"]
 			]);
 		}
 
@@ -89,43 +89,6 @@ class Service
 			"header" => "Crédito enviado",
 			"icon" => "pan_tool",
 			"text" => "¡Chócala! Usted ha enviado §$amount a @{$person->username} correctamente. Esta transfencia se mostrará en sus transacciones.",
-			"button" => ["href" => "CREDITO", "caption" => "Transacciones"]
-		]);
-	}
-
-	/**
-	 * Execute a payment
-	 *
-	 * @param Request
-	 * @return Response
-	 */
-	public function _purchase(Request $request, Response $response)
-	{
-		// get params for the purchase
-		$buyer = $request->person->id;
-		$inventory = strtoupper($request->input->data->item);
-
-		// send the transfer
-		try {
-			$pay = MoneyNew::buy($buyer, $inventory);
-		} catch (Exception $e) {
-			// create the alert
-			Utils::createAlert($e->getMessage());
-
-			// let the user know
-			return $response->setTemplate('message.ejs', [
-				"header" => "Error inesperado",
-				"icon" => "sentiment_very_dissatisfied",
-				"text" => "Encontramos un error en su compra. Puede que los productos se hallan acabado o el vendedor no este activo en este momento. Por favor intente nuevamente y si el problema persiste, consulte al soporte.",
-				"button" => ["href" => "CREDITO", "caption" => "Ver crédito"]
-			]);
-		}
-
-		// return ok message
-		return $response->setTemplate('message.ejs', [
-			"header" => "Compra realizada",
-			"icon" => "pan_tool",
-			"text" => "¡Chócala! Usted ha canjeado §{$pay->price} por {$pay->name} correctamente. Esta transfencia se mostrará en sus transacciones.",
 			"button" => ["href" => "CREDITO", "caption" => "Transacciones"]
 		]);
 	}
