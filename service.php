@@ -37,11 +37,15 @@ class Service
 	 *
 	 * @param Request
 	 * @param Response
+	 *
+	 * @throws \Exception
 	 */
 	public function _obtener(Request $request, Response $response)
 	{
 		$response->setCache("month");
 		$response->setTemplate('obtain.ejs');
+
+		Challenges::complete("read-how-to-obtain-credit", $request->person->id);
 	}
 
 	/**
@@ -64,7 +68,7 @@ class Service
 	 */
 	public function _transfer(Request $request, Response $response)
 	{
-		// get params for the transfer 
+		// get params for the transfer
 		$amount = (float)$request->input->data->price;
 		$username = $request->input->data->username;
 		$reason = $request->input->data->reason;
