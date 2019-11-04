@@ -64,7 +64,8 @@ class Service
 	 * Execute a transfer
 	 *
 	 * @param Request
-	 * @return Response
+	 *
+	 * @return void
 	 */
 	public function _transfer(Request $request, Response $response)
 	{
@@ -76,24 +77,37 @@ class Service
 		// get the person who will receive the funds
 		$person = Utils::getPerson($username);
 
+		if ($person === false) {
+			$response->setTemplate('message.ejs', [
+				"header" => "Usuario no encontrado",
+				"icon" => "sentiment_very_dissatisfied",
+				"text" => "El usuario al cual quiere transferir no existe en el sistema. Por favor intente nuevamente.",
+				"button" => ["href" => "CREDITO ENVIAR", "caption" => "Transferir"]
+			]);
+			return;
+		}
+
 		// send the transfer
 		try {
 			MoneyNew::send($request->person->id, $person->id, $amount, $reason);
 		} catch (Exception $e) {
-			return $response->setTemplate('message.ejs', [
+			$response->setTemplate('message.ejs', [
 				"header" => "Error inesperado",
 				"icon" => "sentiment_very_dissatisfied",
 				"text" => "Encontramos un error inesperado transfiriendo su crédito. Por favor intente nuevamente.",
 				"button" => ["href" => "CREDITO ENVIAR", "caption" => "Transferir"]
 			]);
+			return;
 		}
 
 		// return ok message
-		return $response->setTemplate('message.ejs', [
+		$response->setTemplate('message.ejs', [
 			"header" => "Crédito enviado",
 			"icon" => "pan_tool",
 			"text" => "¡Chócala! Usted ha enviado §$amount a @{$person->username} correctamente. Esta transfencia se mostrará en sus transacciones.",
 			"button" => ["href" => "CREDITO", "caption" => "Transacciones"]
 		]);
+
+		return;
 	}
 }
