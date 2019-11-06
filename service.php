@@ -25,7 +25,8 @@ class Service
 		// create response data
 		$content = [
 			'credit' => $request->person->credit,
-			'items' => $transfers
+			'items' => $transfers,
+			"canTransfer" => $request->person->level >= Level::TOPACIO,
 		];
 
 		// send response
@@ -52,6 +53,16 @@ class Service
 	 */
 	public function _enviar(Request $request, Response $response)
 	{
+		// error if you do not have enought level to transfer
+		if($request->person->level < Level::TOPACIO) {
+			return $response->setTemplate('message.ejs', [
+				"header" => "Nivel insuficiente",
+				"icon" => "sentiment_very_dissatisfied",
+				"text" => "¡Hola! Usted aún no es nivel Topacio, por lo cual no podrá realizar una tranferencia de crédito. Siga usando la app para subir de nivel.",
+				"button" => ["href" => "PERFIL NIVELES", "caption" => "Ver mi nivel"]
+			]);
+		}
+
 		$response->setCache("year");
 		$response->setTemplate('enviar.ejs', ["credit" => $request->person->credit]);
 	}
@@ -64,6 +75,16 @@ class Service
 	 */
 	public function _transfer(Request $request, Response $response)
 	{
+		// error if you do not have enought level to transfer
+		if($request->person->level < Level::TOPACIO) {
+			return $response->setTemplate('message.ejs', [
+				"header" => "Nivel insuficiente",
+				"icon" => "sentiment_very_dissatisfied",
+				"text" => "¡Hola! Usted aún no es nivel Topacio, por lo cual no podrá realizar una tranferencia de crédito. Siga usando la app para subir de nivel.",
+				"button" => ["href" => "PERFIL NIVELES", "caption" => "Ver mi nivel"]
+			]);
+		}
+
 		// get params for the transfer 
 		$amount = (float)$request->input->data->price;
 		$username = $request->input->data->username;

@@ -6,7 +6,10 @@
 
 		<p>Use su crédito para comprar dentro de la app, o transfiera créditos a otros usuarios.</p>
 
-		<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO ENVIAR'})">Transferir</a>
+		<% if(canTransfer) { %>
+			<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO ENVIAR'})">Transferir</a>
+		<% } %>
+
 		<a class="waves-effect waves-light btn-small grey" href="#" onclick="apretaste.send({command:'CREDITO OBTENER'})">Obtener crédito</a>
 
 		<% if(items.length) { %>
