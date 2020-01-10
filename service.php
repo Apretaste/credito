@@ -1,11 +1,18 @@
 <?php
 
+use Apretaste\Money;
+use Apretaste\Person;
+use Apretaste\Request;
+use Apretaste\Response;
+use Framework\Database;
+use Apretaste\Challenges;
+
 class Service
 {
 	/**
 	 * Main function
 	 */
-	public function _main(Request $request, Response $response)
+	public function _main(Request $request, Response &$response)
 	{
 		// get all transfers
 		$transfers = MoneyNew::transactions($request->person->id);
@@ -19,18 +26,18 @@ class Service
 			unset($t->reason);
 			unset($t->inventory_code);
 			unset($t->inventory_name);
-			$t->datetime = date("d/m/Y g:ia", strtotime($t->datetime));
+			$t->datetime = date('d/m/Y g:ia', strtotime($t->datetime));
 		}
 
 		// create response data
 		$content = [
-			'credit' => $request->person->credit,
-			'items' => $transfers,
-			"canTransfer" => $request->person->level >= Level::TOPACIO,
+				'credit'      => $request->person->credit,
+				'items'       => $transfers,
+				'canTransfer' => $request->person->level >= Level::TOPACIO,
 		];
 
 		// send response
-		$response->setTemplate("home.ejs", $content);
+		$response->setTemplate('home.ejs', $content);
 	}
 
 	/**
@@ -41,53 +48,59 @@ class Service
 	 *
 	 * @throws \Exception
 	 */
-	public function _obtener(Request $request, Response $response)
+	public function _obtener(Request $request, Response &$response)
 	{
-		$response->setCache("month");
+		$response->setCache('month');
 		$response->setTemplate('obtain.ejs');
 
-		Challenges::complete("read-how-to-obtain-credit", $request->person->id);
+		Challenges::complete('read-how-to-obtain-credit', $request->person->id);
 	}
 
 	/**
 	 * Starts a new transfer
 	 *
-	 * @param Request
-	 * @return Response
+	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Response $response
+	 *
+	 * @throws \Framework\Alert
 	 */
-	public function _enviar(Request $request, Response $response)
+	public function _enviar(Request $request, Response &$response)
 	{
 		// error if you do not have enought level to transfer
 		if($request->person->level < Level::TOPACIO) {
-			return $response->setTemplate('message.ejs', [
-				"header" => "Nivel insuficiente",
-				"icon" => "sentiment_very_dissatisfied",
-				"text" => "¡Hola! Usted aún no es nivel Topacio, por lo cual no podrá realizar una tranferencia de crédito. Siga usando la app para subir de nivel.",
-				"button" => ["href" => "PERFIL NIVELES", "caption" => "Ver mi nivel"]
+			$response->setTemplate('message.ejs', [
+					'header' => 'Nivel insuficiente',
+					'icon'   => 'sentiment_very_dissatisfied',
+					'text'   => '¡Hola! Usted aún no es nivel Topacio, por lo cual no podrá realizar una tranferencia de crédito. Siga usando la app para subir de nivel.',
+					'button' => ['href' => 'PERFIL NIVELES', 'caption' => 'Ver mi nivel']
 			]);
+			return;
 		}
 
-		$response->setCache("year");
-		$response->setTemplate('enviar.ejs', ["credit" => $request->person->credit]);
+		$response->setCache('year');
+		$response->setTemplate('enviar.ejs', ['credit' => $request->person->credit]);
 	}
 
 	/**
 	 * Execute a transfer
 	 *
-	 * @param Request
+	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Response $response
 	 *
 	 * @return void
+	 * @throws \Framework\Alert
 	 */
-	public function _transfer(Request $request, Response $response)
+	public function _transfer(Request $request, Response &$response)
 	{
 		// error if you do not have enought level to transfer
 		if($request->person->level < Level::TOPACIO) {
-			return $response->setTemplate('message.ejs', [
-				"header" => "Nivel insuficiente",
-				"icon" => "sentiment_very_dissatisfied",
-				"text" => "¡Hola! Usted aún no es nivel Topacio, por lo cual no podrá realizar una tranferencia de crédito. Siga usando la app para subir de nivel.",
-				"button" => ["href" => "PERFIL NIVELES", "caption" => "Ver mi nivel"]
+			$response->setTemplate('message.ejs', [
+					'header' => 'Nivel insuficiente',
+					'icon'   => 'sentiment_very_dissatisfied',
+					'text'   => '¡Hola! Usted aún no es nivel Topacio, por lo cual no podrá realizar una tranferencia de crédito. Siga usando la app para subir de nivel.',
+					'button' => ['href' => 'PERFIL NIVELES', 'caption' => 'Ver mi nivel']
 			]);
+			return;
 		}
 
 		// get params for the transfer 
@@ -96,39 +109,37 @@ class Service
 		$reason = $request->input->data->reason;
 
 		// get the person who will receive the funds
-		$person = Utils::getPerson($username);
+		$person = Person::find($username);
 
 		if ($person === false) {
 			$response->setTemplate('message.ejs', [
-				"header" => "Usuario no encontrado",
-				"icon" => "sentiment_very_dissatisfied",
-				"text" => "El usuario al cual quiere transferir no existe en el sistema. Por favor intente nuevamente.",
-				"button" => ["href" => "CREDITO ENVIAR", "caption" => "Transferir"]
+					'header' => 'Usuario no encontrado',
+					'icon'   => 'sentiment_very_dissatisfied',
+					'text'   => 'El usuario al cual quiere transferir no existe en el sistema. Por favor intente nuevamente.',
+					'button' => ['href' => 'CREDITO ENVIAR', 'caption' => 'Transferir']
 			]);
 			return;
 		}
 
 		// send the transfer
 		try {
-			MoneyNew::send($request->person->id, $person->id, $amount, $reason);
+			Money::send($request->person->id, $person->id, $amount, $reason);
 		} catch (Exception $e) {
 			$response->setTemplate('message.ejs', [
-				"header" => "Error inesperado",
-				"icon" => "sentiment_very_dissatisfied",
-				"text" => "Encontramos un error inesperado transfiriendo su crédito. Por favor intente nuevamente.",
-				"button" => ["href" => "CREDITO ENVIAR", "caption" => "Transferir"]
+					'header' => 'Error inesperado',
+					'icon'   => 'sentiment_very_dissatisfied',
+					'text'   => 'Encontramos un error inesperado transfiriendo su crédito. Por favor intente nuevamente.',
+					'button' => ['href' => 'CREDITO ENVIAR', 'caption' => 'Transferir']
 			]);
 			return;
 		}
 
 		// return ok message
 		$response->setTemplate('message.ejs', [
-			"header" => "Crédito enviado",
-			"icon" => "pan_tool",
-			"text" => "¡Chócala! Usted ha enviado §$amount a @{$person->username} correctamente. Esta transfencia se mostrará en sus transacciones.",
-			"button" => ["href" => "CREDITO", "caption" => "Transacciones"]
+				'header' => 'Crédito enviado',
+				'icon'   => 'pan_tool',
+				'text'   => "¡Chócala! Usted ha enviado §$amount a @{$person->username} correctamente. Esta transfencia se mostrará en sus transacciones.",
+				'button' => ['href' => 'CREDITO', 'caption' => 'Transacciones']
 		]);
-
-		return;
 	}
 }
