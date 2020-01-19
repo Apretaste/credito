@@ -4,7 +4,6 @@ use Apretaste\Money;
 use Apretaste\Person;
 use Apretaste\Request;
 use Apretaste\Response;
-use Framework\Database;
 use Apretaste\Challenges;
 
 class Service
@@ -31,8 +30,8 @@ class Service
 
 		// create response data
 		$content = [
-				'credit'      => $request->person->credit,
-				'items'       => $transfers,
+				'credit' => $request->person->credit,
+				'items' => $transfers,
 				'canTransfer' => $request->person->level >= Level::TOPACIO,
 		];
 
@@ -59,7 +58,7 @@ class Service
 	/**
 	 * Starts a new transfer
 	 *
-	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Request $request
 	 * @param \Apretaste\Response $response
 	 *
 	 * @throws \Framework\Alert
@@ -67,11 +66,11 @@ class Service
 	public function _enviar(Request $request, Response &$response)
 	{
 		// error if you do not have enought level to transfer
-		if($request->person->level < Level::TOPACIO) {
+		if ($request->person->level < Level::TOPACIO) {
 			$response->setTemplate('message.ejs', [
 					'header' => 'Nivel insuficiente',
-					'icon'   => 'sentiment_very_dissatisfied',
-					'text'   => '¡Hola! Usted aún no es nivel Topacio, por lo cual no podrá realizar una tranferencia de crédito. Siga usando la app para subir de nivel.',
+					'icon' => 'sentiment_very_dissatisfied',
+					'text' => '¡Hola! Usted aún no es nivel Topacio, por lo cual no podrá realizar una tranferencia de crédito. Siga usando la app para subir de nivel.',
 					'button' => ['href' => 'PERFIL NIVELES', 'caption' => 'Ver mi nivel']
 			]);
 			return;
@@ -84,7 +83,7 @@ class Service
 	/**
 	 * Execute a transfer
 	 *
-	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Request $request
 	 * @param \Apretaste\Response $response
 	 *
 	 * @return void
@@ -93,18 +92,18 @@ class Service
 	public function _transfer(Request $request, Response &$response)
 	{
 		// error if you do not have enought level to transfer
-		if($request->person->level < Level::TOPACIO) {
+		if ($request->person->level < Level::TOPACIO) {
 			$response->setTemplate('message.ejs', [
 					'header' => 'Nivel insuficiente',
-					'icon'   => 'sentiment_very_dissatisfied',
-					'text'   => '¡Hola! Usted aún no es nivel Topacio, por lo cual no podrá realizar una tranferencia de crédito. Siga usando la app para subir de nivel.',
+					'icon' => 'sentiment_very_dissatisfied',
+					'text' => '¡Hola! Usted aún no es nivel Topacio, por lo cual no podrá realizar una tranferencia de crédito. Siga usando la app para subir de nivel.',
 					'button' => ['href' => 'PERFIL NIVELES', 'caption' => 'Ver mi nivel']
 			]);
 			return;
 		}
 
-		// get params for the transfer 
-		$amount = (float)$request->input->data->price;
+		// get params for the transfer
+		$amount = (float) $request->input->data->price;
 		$username = $request->input->data->username;
 		$reason = $request->input->data->reason;
 
@@ -114,8 +113,8 @@ class Service
 		if ($person === false) {
 			$response->setTemplate('message.ejs', [
 					'header' => 'Usuario no encontrado',
-					'icon'   => 'sentiment_very_dissatisfied',
-					'text'   => 'El usuario al cual quiere transferir no existe en el sistema. Por favor intente nuevamente.',
+					'icon' => 'sentiment_very_dissatisfied',
+					'text' => 'El usuario al cual quiere transferir no existe en el sistema. Por favor intente nuevamente.',
 					'button' => ['href' => 'CREDITO ENVIAR', 'caption' => 'Transferir']
 			]);
 			return;
@@ -127,8 +126,8 @@ class Service
 		} catch (Exception $e) {
 			$response->setTemplate('message.ejs', [
 					'header' => 'Error inesperado',
-					'icon'   => 'sentiment_very_dissatisfied',
-					'text'   => 'Encontramos un error inesperado transfiriendo su crédito. Por favor intente nuevamente.',
+					'icon' => 'sentiment_very_dissatisfied',
+					'text' => 'Encontramos un error inesperado transfiriendo su crédito. Por favor intente nuevamente.',
 					'button' => ['href' => 'CREDITO ENVIAR', 'caption' => 'Transferir']
 			]);
 			return;
@@ -137,8 +136,8 @@ class Service
 		// return ok message
 		$response->setTemplate('message.ejs', [
 				'header' => 'Crédito enviado',
-				'icon'   => 'pan_tool',
-				'text'   => "¡Chócala! Usted ha enviado §$amount a @{$person->username} correctamente. Esta transfencia se mostrará en sus transacciones.",
+				'icon' => 'pan_tool',
+				'text' => "¡Chócala! Usted ha enviado §$amount a @{$person->username} correctamente. Esta transfencia se mostrará en sus transacciones.",
 				'button' => ['href' => 'CREDITO', 'caption' => 'Transacciones']
 		]);
 	}
