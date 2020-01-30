@@ -5,6 +5,7 @@ use Apretaste\Person;
 use Apretaste\Request;
 use Apretaste\Response;
 use Apretaste\Challenges;
+use Apretaste\Level;
 
 class Service
 {
