@@ -14,7 +14,7 @@ class Service
 	public function _main(Request $request, Response &$response)
 	{
 		// get all transfers
-		$transfers = MoneyNew::transactions($request->person->id);
+		$transfers = Money::transactions($request->person->id);
 
 		// clean the transfers array
 		foreach ($transfers as $t) {
