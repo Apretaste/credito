@@ -1,18 +1,22 @@
 <div class="row">
 	<div class="col s12">
+		<ul class="tabs tabs-fixed-width">
+			<li class="tab"><a href="#" class="active">Crédito</a></li>
+			<li class="tab"><a href="#" onclick="apretaste.send({command: 'CREDITO OBTENER'})">Ayuda</a></li>
+		</ul>
+	</div>
+
+	<div class="col s12">
 		<h1 class="green-text">§<%= Number.parseFloat(credit).toFixed(2) %></h1>
 
-		<p>Use su crédito para comprar dentro de la app, o transfiera créditos a otros usuarios.</p>
-
 		<% if(canTransfer) { %>
-			<a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO ENVIAR'})">Transferir</a>
+			<p><a class="waves-effect waves-light btn-small" href="#" onclick="apretaste.send({command:'CREDITO ENVIAR'})">Transferir</a></p>
+		<% } else { %>
+			<p class="small red-text text-darken-1">Necesita nivel Topacio o superior para transferir.</p>
 		<% } %>
 
-		<a class="waves-effect waves-light btn-small grey" href="#" onclick="apretaste.send({command:'CREDITO OBTENER'})">Obtener crédito</a>
-
 		<% if(items.length) { %>
-			<h1>Transacciones</h1>
-			<table class="striped"0>
+			<table class="striped">
 				<% items.forEach(function(item){ %>
 					<tr>
 						<td>

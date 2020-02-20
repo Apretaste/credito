@@ -66,7 +66,7 @@ class Service
 	public function _enviar(Request $request, Response $response)
 	{
 		// error if you do not have enought level to transfer
-		if ($request->person->level < Level::TOPACIO) {
+		if ($request->person->levelCode < Level::TOPACIO) {
 			return $response->setTemplate('message.ejs', [
 				'header' => 'Nivel insuficiente',
 				'icon' => 'sentiment_very_dissatisfied',
@@ -88,7 +88,7 @@ class Service
 	public function _transfer(Request $request, Response $response)
 	{
 		// error if you do not have enought level to transfer
-		if ($request->person->level < Level::TOPACIO) {
+		if ($request->person->levelCode < Level::TOPACIO) {
 			return $response->setTemplate('message.ejs', [
 				'header' => 'Nivel insuficiente',
 				'icon' => 'sentiment_very_dissatisfied',
