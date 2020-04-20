@@ -7,13 +7,9 @@
 	</div>
 
 	<div class="col s12">
-		<h1 class="green-text">§<%= Number.parseFloat(credit).toFixed(2) %></h1>
-		
-		<% if(canTransfer) { %>
-			<p><a class="waves-effect waves-light btn-small green" href="#!" onclick="apretaste.send({command:'CREDITO ENVIAR'})">Transferir</a></p>
-		<% } else { %>
-			<p class="small red-text text-lighten-2">Necesita ser <a href="#!" onclick="apretaste.send({command:'PERFIL NIVELES'})">nivel topacio o superior</a> para transferir.</p>
-		<% } %>
+		<h1 class="green-text">§<%= credit %></h1>
+
+		<p>Use su crédito para canjear dentro de la app.</p>
 
 		<% if(items.length) { %>
 			<table class="striped">
