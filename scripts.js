@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	$('.tabs').tabs();
 	$('.modal').modal();
 });
 
@@ -18,8 +19,13 @@ function openModal (total) {
 	var data = validate();
 	if(!data) return false;
 
+	// add @ to the username if not an email
+	if(!isValidEmail(data.username)) {
+		data.username = '@' + data.username;
+	}
+
 	// open the modal
-	$('#modalUsername').html('@'+data.username);
+	$('#modalUsername').html(data.username);
 	$('#modalAmount').html(data.amount);
 	$('#transferModal').modal('open');
 }
@@ -92,3 +98,8 @@ $(function(){
 		$(this).val($(this).val().replace(',', '.'));
 	});
 });
+
+// check wether a string is a valid email
+function isValidEmail(email) {
+	return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
+}

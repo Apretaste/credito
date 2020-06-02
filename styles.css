@@ -3,6 +3,10 @@
 	margin-top: 40px;
 }
 
+.small {
+	font-size: smaller;
+}
+
 .bottom-space {
-	margin-bottom: 60px;
+	margin-bottom: 80px;
 }
