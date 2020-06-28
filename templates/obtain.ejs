@@ -27,7 +27,7 @@
             ["Canjeando cupones", "Los cupones son palabras claves como APRETASTE1 o NAVIDADAP presentes en los correos informativos que son enviados en las fechas importantes como efemérides, cambios importantes en la app o fechas patrias. Está atento a dichos correos y siempre aumentarás tu crédito."]
         ]; for(var i in items) { %>
             <li class="collection-item avatar">
-                <i class="number circle"><%= i + 1 %></i>
+                <i class="number circle"><%= (i*1) + 1 %></i>
                 <p class="green-text"><%= items[i][0] %></p>
                 <p><%= items[i][1] %></p>
             </li>
