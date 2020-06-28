@@ -16,7 +16,7 @@
 				<% items.forEach(function(item){ %>
 					<tr>
 						<td>
-							<%= item.type == 'purchase' ? "Canje" : (item.origin=='received' ? 'Recibido' : "Enviado") %><br/>
+							<%= item.reason %><br/>
 							<small class="nowrap text-gray"><%= item.datetime %></small>
 						</td>
 						<td><%= item.desc %></td>

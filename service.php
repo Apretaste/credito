@@ -1,11 +1,9 @@
 <?php
 
 use Apretaste\Money;
-use Apretaste\Person;
 use Apretaste\Request;
 use Apretaste\Response;
 use Apretaste\Challenges;
-use Apretaste\Level;
 
 class Service
 {
@@ -53,6 +51,5 @@ class Service
 		// send data to the view
 		$response->setCache('month');
 		$response->setTemplate('obtain.ejs');
-
 	}
 }

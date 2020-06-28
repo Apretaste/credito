@@ -9,26 +9,39 @@
     <div class="col s12">
         <p>Los créditos de Apretaste (§) se usan para canjear dentro de la app. Puedes obtener créditos de las
             siguientes formas:</p>
-
-        <b>1. Invitando amigos</b>
-        <p>Invita a tus amigos y familiares a usar la app y tanto tú como ellos ganarán créditos. Encuentra el link a
-            invitar en el menú de la izquierda.</p>
-
-        <b>2. Respondiendo encuestas</b>
-        <p>En Apretaste se ofrecen encuestas, y cada una de ellas ofrece diferentes premios en crédito al completarlas.
-            Accede al servicio Encuesta para ver la lista de encuestas activas.</p>
-
-        <b>3. Cumpliendo retos</b>
-        <p>Cada día salen nuevos retos que te ayudan a ganar créditos. Abre los retos desde el menú a la izquierda y
-            empieza a trabajar en ellos.</p>
-
-        <b>4. Ganando concursos</b>
-        <p>En Apretaste tenemos concursos con premios que van desde teléfonos y recargas Cubacel hasta crédito. Revisa
-            los concursos activos y empieza a ganar.</p>
-
-        <b>5. Canjeando cupones</b>
-        <p>Los cupones son palabras claves como APRETASTE1 o NAVIDADAP presentes en los correos informativos que son
-            enviados en las fechas importantes como efemérides, cambios importantes en la app o fechas patrias. Está
-            atento a dichos correos y siempre aumentarás tu crédito.</p>
     </div>
+
+    <ul class="collection number-list">
+        <li class="collection-item avatar">
+            <i class="number circle">1</i>
+            <p class="green-text">Esto es lo primero que debes saber</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </li>
+    </ul>
+    <div class="col s12">
+        <% var items = [
+            ["Invitando amigos", "Invita a tus amigos y familiares a usar la app y tanto tú como ellos ganarán créditos. Encuentra el link a invitar en el menú de la izquierda."],
+            ["Respondiendo encuestas", "En Apretaste se ofrecen encuestas, y cada una de ellas ofrece diferentes premios en crédito al completarlas. Accede al servicio Encuesta para ver la lista de encuestas activas."],
+            ["Cumpliendo retos", "Cada día salen nuevos retos que te ayudan a ganar créditos. Abre los retos desde el menú a la izquierda y empieza a trabajar en ellos."],
+            ["Ganando concursos"," En Apretaste tenemos concursos con premios que van desde teléfonos y recargas Cubacel hasta crédito. Revisa  los concursos activos y empieza a ganar."],
+            ["Canjeando cupones","Los cupones son palabras claves como APRETASTE1 o NAVIDADAP presentes en los correos informativos que son \n" +
+            "enviados en las fechas importantes como efemérides, cambios importantes en la app o fechas patrias. Está \n" +
+            "atento a dichos correos y siempre aumentarás tu crédito."]
+        ]; for(var i in items) { %>
+            <li class="collection-item avatar">
+                <i class="number circle"><%= i + 1 %></i>
+                <p class="green-text"><%= items[i][0] %></p>
+                <p><%= items[i][1] %></p>
+            </li>
+        <% } %>
+    </div>
+</div>
+
+<div class="bottom-space"></div>
+
+<!-- BUTTON -->
+<div id="btn" class="fixed-action-btn">
+    <a class="btn-floating btn-large waves-effect waves-light green" href="#!" onclick="apretaste.send({command: 'CREDITO'})">
+        <i class="material-icons">arrow_back</i>
+    </a>
 </div>
