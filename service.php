@@ -21,10 +21,9 @@ class Service
 			unset($t->sender_username);
 			unset($t->receiver_id);
 			unset($t->receiver_username);
-			unset($t->reason);
 			unset($t->inventory_code);
 			unset($t->inventory_name);
-			$t->datetime = date('d/m/Y g:ia', strtotime($t->datetime));
+			$t->datetime = date('d/m/Y g:i A', strtotime($t->datetime));
 		}
 
 		// create response data

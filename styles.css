@@ -25,3 +25,30 @@
 	left: 10px !important;
 	font-style: normal;
 }
+
+/* TAGS */
+
+.chip .icon {
+	float: left;
+	font-size: 16px;
+	line-height: 32px;
+	padding-right: 5px;
+}
+
+.chip.tiny {
+	height: 20px;
+	padding: 0 10px;
+	line-height: 20px;
+	font-size: x-small;
+}
+
+.chip.tiny .icon {
+	line-height: 20px;
+}
+
+.chip.clear {
+	color: rgba(0,0,0,0.87);
+	margin: 0px;
+	padding: 0px;
+	background-color: transparent;
+}

@@ -16,8 +16,8 @@
 				<% items.forEach(function(item){ %>
 					<tr>
 						<td>
-							<%= item.reason %><br/>
-							<small class="nowrap text-gray"><%= item.datetime %></small>
+							<div><%= item.reason %></div>
+							<span class="chip tiny clear grey-text text-darken-2"><i class="fas fa-calendar"></i> <%= item.datetime %></span>
 						</td>
 						<td><%= item.desc %></td>
 						<td>
