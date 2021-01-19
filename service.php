@@ -3,6 +3,7 @@
 use Apretaste\Money;
 use Apretaste\Request;
 use Apretaste\Response;
+use Apretaste\Tutorial;
 use Apretaste\Challenges;
 
 class Service
@@ -46,6 +47,9 @@ class Service
 	{
 		// complete the challenge
 		Challenges::complete('read-how-to-obtain-credit', $request->person->id);
+
+		// complete tutorial
+		Tutorial::complete($request->person->id, 'get_credits');
 
 		// send data to the view
 		$response->setCache('month');
